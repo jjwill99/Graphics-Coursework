@@ -85,7 +85,7 @@ public class CS2150Coursework extends GraphicsLab {
 		// load the textures
 
 		// carpet.jpg not in correct size
-		groundTextures = loadTexture("coursework/willij13/textures/carpet.jpg");
+		groundTextures = loadTexture("coursework/willij13/textures/metal_floor.jpg");
 		wallTextures = loadTexture("coursework/willij13/textures/bricks.jpg");
 
 		// global ambient light level
