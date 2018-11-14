@@ -12,6 +12,7 @@ package coursework.willij13;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.Cylinder;
 import org.lwjgl.util.glu.GLU;
+import org.lwjgl.util.glu.Sphere;
 import org.lwjgl.input.Keyboard;
 import org.newdawn.slick.opengl.Texture;
 import GraphicsLab.*;
@@ -142,6 +143,14 @@ public class CS2150Coursework extends GraphicsLab {
 			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(gripFrontDiffuse));
 			
 			GL11.glCallList(gripList);
+			
+			GL11.glPushMatrix();
+			{
+				GL11.glTranslatef(0, 0, -2);
+				
+				GL11.glCallList(spikeList);
+			}
+			GL11.glPopMatrix();
 
 			GL11.glPushMatrix();
 			{
@@ -231,6 +240,15 @@ public class CS2150Coursework extends GraphicsLab {
 			}
 			GL11.glPopMatrix();
 		}
+		
+		GL11.glPushMatrix();
+		{
+			GL11.glTranslatef(0, 0, 3);
+			
+			GL11.glCallList(dartBackEndList);
+		}
+		GL11.glPopMatrix();
+		
 		GL11.glPopMatrix();
 
 	}
@@ -343,9 +361,11 @@ public class CS2150Coursework extends GraphicsLab {
 	}
 
 	public void drawUnitSpike() {
+		new Cylinder().draw(0, 0.1f, 2, 20, 20);
 	}
 
 	public void drawUnitDartBackEnd() {
+		new Sphere().draw(0.1f, 20, 20);
 	}
 
 }
