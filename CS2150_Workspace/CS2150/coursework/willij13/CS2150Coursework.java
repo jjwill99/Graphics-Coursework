@@ -65,7 +65,7 @@ public class CS2150Coursework extends GraphicsLab {
 	private float dartAngleX = 0.0f;
 
 	private float dartMovementX = 0.0f;
-	
+
 	private boolean thrown = false;
 
 	// TODO: Feel free to change the window title and default animation scale
@@ -142,8 +142,7 @@ public class CS2150Coursework extends GraphicsLab {
 				dartAngleY = 0.0f;
 				dartAngleX = 0.0f;
 			}
-		}
-		else {
+		} else {
 			spinRotationAngle = 45f;
 		}
 
@@ -154,7 +153,7 @@ public class CS2150Coursework extends GraphicsLab {
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_R)) {
 			// reset scene
-			thrown = false;
+			resetAnimations();
 		}
 	}
 
@@ -267,6 +266,19 @@ public class CS2150Coursework extends GraphicsLab {
 		{
 			// Renders the back of the dart
 
+			// how shiny is the back (specular exponent)
+			float finFrontShininess = 2.0f;
+			// specular reflection of the back
+			float finFrontSpecular[] = { 0.1f, 0.0f, 0.0f, 1.0f };
+			// diffuse reflection of the back
+			float finFrontDiffuse[] = { 0.8f, 0.6f, 0.2f, 1.0f };
+
+			// set the material properties for the back using OpenGL
+			GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, finFrontShininess);
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(finFrontSpecular));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(finFrontDiffuse));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(finFrontDiffuse));
+
 			GL11.glTranslatef(0, 0, 3);
 
 			GL11.glCallList(dartBackEndList);
@@ -297,6 +309,12 @@ public class CS2150Coursework extends GraphicsLab {
 	}
 
 	protected void cleanupScene() {// TODO: Clean up your resources here
+	}
+
+	public void resetAnimations() {
+		thrown = false;
+		dartMovementY = 0.0f;
+		dartMovementX = 0.0f;
 	}
 
 	public void drawUnitGrip() {
@@ -393,6 +411,51 @@ public class CS2150Coursework extends GraphicsLab {
 
 	public void drawUnitDartBackEnd() {
 		new Sphere().draw(0.1f, 20, 20);
+	}
+
+	public void drawUnitPlane() {
+		Vertex v1 = new Vertex(-0.5f, 0.0f, -0.5f);
+		Vertex v2 = new Vertex(0.5f, 0.0f, -0.5f);
+		Vertex v3 = new Vertex(0.5f, 0.0f, 0.5f);
+		Vertex v4 = new Vertex(-0.5f, 0.0f, 0.5f);
+
+		// draw the plane geometry. order the vertices so that the plane faces up
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			new Normal(v4.toVector(), v3.toVector(), v2.toVector(), v1.toVector()).submit();
+
+			GL11.glTexCoord2f(0.0f, 0.0f);
+			v4.submit();
+
+			GL11.glTexCoord2f(1.0f, 0.0f);
+			v3.submit();
+
+			GL11.glTexCoord2f(1.0f, 1.0f);
+			v2.submit();
+
+			GL11.glTexCoord2f(0.0f, 1.0f);
+			v1.submit();
+		}
+		GL11.glEnd();
+
+		// if the user is viewing an axis, then also draw this plane
+		// using lines so that axis aligned planes can still be seen
+		if (isViewingAxis()) {
+			// also disable textures when drawing as lines
+			// so that the lines can be seen more clearly
+			GL11.glPushAttrib(GL11.GL_TEXTURE_2D);
+			GL11.glDisable(GL11.GL_TEXTURE_2D);
+			GL11.glBegin(GL11.GL_LINE_LOOP);
+			{
+				v4.submit();
+				v3.submit();
+				v2.submit();
+				v1.submit();
+			}
+			GL11.glEnd();
+			GL11.glPopAttrib();
+		}
+
 	}
 
 }
