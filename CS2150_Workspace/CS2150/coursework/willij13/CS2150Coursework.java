@@ -53,10 +53,12 @@ public class CS2150Coursework extends GraphicsLab {
 	 * display list id of the dart back end
 	 */
 	private final int dartBackEndList = 4;
+	/**
+	 * display list id of plane
+	 */
+	private final int planeList = 5;
 
 	private float spinRotationAngle = 0.0f;
-
-	private float time = 0.0f;
 
 	private float dartAngleY = 0.0f;
 
@@ -68,6 +70,11 @@ public class CS2150Coursework extends GraphicsLab {
 
 	private boolean thrown = false;
 
+	/** ids for nearest, linear and mipmapped textures for the ground plane */
+	private Texture groundTextures;
+
+	private Texture wallTextures;
+
 	// TODO: Feel free to change the window title and default animation scale
 	// here
 	public static void main(String args[]) {
@@ -75,6 +82,12 @@ public class CS2150Coursework extends GraphicsLab {
 	}
 
 	protected void initScene() throws Exception {
+		// load the textures
+
+		// carpet.jpg not in correct size
+		groundTextures = loadTexture("coursework/willij13/textures/carpet.jpg");
+		wallTextures = loadTexture("coursework/willij13/textures/bricks.jpg");
+
 		// global ambient light level
 		float globalAmbient[] = { 0.8f, 0.8f, 0.8f, 1.0f };
 		// set the global ambient lighting
@@ -120,6 +133,11 @@ public class CS2150Coursework extends GraphicsLab {
 		GL11.glNewList(dartBackEndList, GL11.GL_COMPILE);
 		{
 			drawUnitDartBackEnd();
+		}
+		GL11.glEndList();
+		GL11.glNewList(planeList, GL11.GL_COMPILE);
+		{
+			drawUnitPlane();
 		}
 		GL11.glEndList();
 	}
@@ -170,6 +188,57 @@ public class CS2150Coursework extends GraphicsLab {
 	}
 
 	protected void renderScene() {
+		// draw the ground plane
+		GL11.glPushMatrix();
+		{
+			// disable lighting calculations so that they don't affect
+			// the appearance of the texture
+			GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
+			GL11.glDisable(GL11.GL_LIGHTING);
+			// change the geometry colour to white so that the texture
+			// is bright and details can be seen clearly
+			Colour.WHITE.submit();
+			// enable texturing and bind an appropriate texture
+			GL11.glEnable(GL11.GL_TEXTURE_2D);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, groundTextures.getTextureID());
+
+			// position, scale and draw the ground plane using its display list
+			GL11.glTranslatef(0.0f, -1.0f, -7.5f);
+			GL11.glScalef(25.0f, 1.0f, 20.0f);
+			GL11.glCallList(planeList);
+
+			// disable textures and reset any local lighting changes
+			GL11.glDisable(GL11.GL_TEXTURE_2D);
+			GL11.glPopAttrib();
+		}
+		GL11.glPopMatrix();
+
+		// draw the wall plane
+		GL11.glPushMatrix();
+		{
+			// disable lighting calculations so that they don't affect
+			// the appearance of the texture
+			GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
+			GL11.glDisable(GL11.GL_LIGHTING);
+			// change the geometry colour to white so that the texture
+			// is bright and details can be seen clearly
+			Colour.WHITE.submit();
+			// enable texturing and bind an appropriate texture
+			GL11.glEnable(GL11.GL_TEXTURE_2D);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, wallTextures.getTextureID());
+
+			// position, scale and draw the back plane using its display list
+			GL11.glTranslatef(0.0f, 4.0f, -17.f);
+			GL11.glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+			GL11.glScalef(25.0f, 1.0f, 10.0f);
+			GL11.glCallList(planeList);
+
+			// disable textures and reset any local lighting changes
+			GL11.glDisable(GL11.GL_TEXTURE_2D);
+			GL11.glPopAttrib();
+		}
+		GL11.glPopMatrix();
+
 		GL11.glPushMatrix();
 		{
 			// Renders the dart grip
@@ -311,17 +380,17 @@ public class CS2150Coursework extends GraphicsLab {
 	protected void cleanupScene() {// TODO: Clean up your resources here
 	}
 
-	public void resetAnimations() {
+	private void resetAnimations() {
 		thrown = false;
 		dartMovementY = 0.0f;
 		dartMovementX = 0.0f;
 	}
 
-	public void drawUnitGrip() {
+	private void drawUnitGrip() {
 		new Cylinder().draw(0.1f, 0.1f, 3f, 20, 20);
 	}
 
-	public void drawUnitFin() {
+	private void drawUnitFin() {
 		// the vertices for a fin
 		Vertex v1 = new Vertex(0.001f, 0f, 0.33f);
 		Vertex v2 = new Vertex(0.001f, 0.15f, 0.3f);
@@ -405,19 +474,19 @@ public class CS2150Coursework extends GraphicsLab {
 		GL11.glEnd();
 	}
 
-	public void drawUnitSpike() {
+	private void drawUnitSpike() {
 		new Cylinder().draw(0, 0.1f, 2, 20, 20);
 	}
 
-	public void drawUnitDartBackEnd() {
+	private void drawUnitDartBackEnd() {
 		new Sphere().draw(0.1f, 20, 20);
 	}
 
-	public void drawUnitPlane() {
-		Vertex v1 = new Vertex(-0.5f, 0.0f, -0.5f);
-		Vertex v2 = new Vertex(0.5f, 0.0f, -0.5f);
-		Vertex v3 = new Vertex(0.5f, 0.0f, 0.5f);
-		Vertex v4 = new Vertex(-0.5f, 0.0f, 0.5f);
+	private void drawUnitPlane() {
+		Vertex v1 = new Vertex(-0.5f, 0.0f, -0.5f); // left, back
+		Vertex v2 = new Vertex(0.5f, 0.0f, -0.5f); // right, back
+		Vertex v3 = new Vertex(0.5f, 0.0f, 0.5f); // right, front
+		Vertex v4 = new Vertex(-0.5f, 0.0f, 0.5f); // left, front
 
 		// draw the plane geometry. order the vertices so that the plane faces up
 		GL11.glBegin(GL11.GL_POLYGON);
@@ -455,7 +524,6 @@ public class CS2150Coursework extends GraphicsLab {
 			GL11.glEnd();
 			GL11.glPopAttrib();
 		}
-
 	}
 
 }
