@@ -65,6 +65,8 @@ public class CS2150Coursework extends GraphicsLab {
 	private float dartAngleX = 0.0f;
 
 	private float dartMovementX = 0.0f;
+	
+	private boolean thrown = false;
 
 	// TODO: Feel free to change the window title and default animation scale
 	// here
@@ -123,21 +125,36 @@ public class CS2150Coursework extends GraphicsLab {
 	}
 
 	protected void checkSceneInput() {
-		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			dartAngleY = 10.0f;
-			dartMovementY += 0.001f;
-		} else if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			dartAngleY = -10.0f;
-			dartMovementY -= 0.001f;
-		} else if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
-			dartAngleX = 5.0f;
-			dartMovementX -= 0.001f;
-		} else if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
-			dartAngleX = -5.0f;
-			dartMovementX += 0.001f;
-		} else {
-			dartAngleY = 0.0f;
-			dartAngleX = 0.0f;
+		if (thrown == true) {
+			if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
+				dartAngleY = 10.0f;
+				dartMovementY += 0.001f;
+			} else if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
+				dartAngleY = -10.0f;
+				dartMovementY -= 0.001f;
+			} else if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
+				dartAngleX = 5.0f;
+				dartMovementX -= 0.001f;
+			} else if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
+				dartAngleX = -5.0f;
+				dartMovementX += 0.001f;
+			} else {
+				dartAngleY = 0.0f;
+				dartAngleX = 0.0f;
+			}
+		}
+		else {
+			spinRotationAngle = 45f;
+		}
+
+		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
+			// throw dart
+			thrown = true;
+		}
+
+		if (Keyboard.isKeyDown(Keyboard.KEY_R)) {
+			// reset scene
+			thrown = false;
 		}
 	}
 
@@ -150,7 +167,7 @@ public class CS2150Coursework extends GraphicsLab {
 		// can be made faster or slower depending on the machine you are working
 		// on
 
-		spinRotationAngle += +6.0f * getAnimationScale();
+		spinRotationAngle += +3.0f * getAnimationScale();
 	}
 
 	protected void renderScene() {
@@ -165,11 +182,11 @@ public class CS2150Coursework extends GraphicsLab {
 			GL11.glRotatef(spinRotationAngle, 0, 0, 1);
 
 			// how shiny is the dart grip (specular exponent)
-			float gripFrontShininess = 2.0f;
+			float gripFrontShininess = 40.0f;
 			// specular reflection of the dart grip
 			float gripFrontSpecular[] = { 0.1f, 0.0f, 0.0f, 1.0f };
 			// diffuse reflection of the dart grip
-			float gripFrontDiffuse[] = { 0.75f, 0.75f, 0.75f, 1.0f };
+			float gripFrontDiffuse[] = { 0.6f, 0.6f, 0.6f, 1.0f };
 
 			// set the material properties for the dart grip using OpenGL
 			GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, gripFrontShininess);
