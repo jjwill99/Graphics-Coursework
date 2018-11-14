@@ -18,7 +18,8 @@ import org.newdawn.slick.opengl.Texture;
 import GraphicsLab.*;
 
 /**
- * TODO: Briefly describe your submission here
+ * Simulation shows a dart that is thrown through the air, and hit an [INSERT
+ * OBJECT HERE]. With the extra challenge of flying through moving rings.
  *
  * <p>
  * Controls:
@@ -29,6 +30,8 @@ import GraphicsLab.*;
  * <li>While viewing the scene along the x, y or z axis, use the up and down
  * cursor keys to increase or decrease the viewpoint's distance from the scene
  * origin
+ * <li>Press/hold w, a, s and d keys to move the dart around the scene while in
+ * flight.
  * </ul>
  * TODO: Add any additional controls for your sample to the list above
  *
@@ -50,12 +53,21 @@ public class CS2150Coursework extends GraphicsLab {
 	 * display list id of the dart back end
 	 */
 	private final int dartBackEndList = 4;
-	
+
 	private float spinRotationAngle = 0.0f;
-	
+
 	private float time = 0.0f;
 
-	// TODO: Feel free to change the window title and default animation scale here
+	private float dartAngleY = 0.0f;
+
+	private float dartMovementY = 0.0f;
+
+	private float dartAngleX = 0.0f;
+
+	private float dartMovementX = 0.0f;
+
+	// TODO: Feel free to change the window title and default animation scale
+	// here
 	public static void main(String args[]) {
 		new CS2150Coursework().run(WINDOWED, "CS2150 Coursework Submission", 0.01f);
 	}
@@ -71,7 +83,7 @@ public class CS2150Coursework extends GraphicsLab {
 		// ...with a very dim ambient contribution...
 		float ambient0[] = { 0.05f, 0.05f, 0.05f, 1.0f };
 		// ...and is positioned above the viewpoint
-		float position0[] = { 0.0f, 10.0f, 0.0f, 1.0f };
+		float position0[] = { 0.0f, 10.0f, 5.0f, 1.0f };
 
 		// supply OpenGL with the properties for the first light
 		GL11.glLight(GL11.GL_LIGHT0, GL11.GL_AMBIENT, FloatBuffer.wrap(ambient0));
@@ -83,7 +95,8 @@ public class CS2150Coursework extends GraphicsLab {
 
 		// enable lighting calculations
 		GL11.glEnable(GL11.GL_LIGHTING);
-		// ensure that all normals are re-normalised after transformations automatically
+		// ensure that all normals are re-normalised after transformations
+		// automatically
 		GL11.glEnable(GL11.GL_NORMALIZE);
 
 		// prepare the display lists for later use
@@ -109,62 +122,87 @@ public class CS2150Coursework extends GraphicsLab {
 		GL11.glEndList();
 	}
 
-	protected void checkSceneInput() {// TODO: Check for keyboard and mouse input here
+	protected void checkSceneInput() {
+		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
+			dartAngleY = 10.0f;
+			dartMovementY += 0.001f;
+		} else if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
+			dartAngleY = -10.0f;
+			dartMovementY -= 0.001f;
+		} else if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
+			dartAngleX = 5.0f;
+			dartMovementX -= 0.001f;
+		} else if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
+			dartAngleX = -5.0f;
+			dartMovementX += 0.001f;
+		} else {
+			dartAngleY = 0.0f;
+			dartAngleX = 0.0f;
+		}
 	}
 
 	protected void updateScene() {
 		// TODO: Update your scene variables here - remember to use the current
 		// animation scale value
-		// (obtained via a call to getAnimationScale()) in your modifications so that
+		// (obtained via a call to getAnimationScale()) in your modifications so
+		// that
 		// your animations
-		// can be made faster or slower depending on the machine you are working on
-		
-		spinRotationAngle += + 6.0f * getAnimationScale();
+		// can be made faster or slower depending on the machine you are working
+		// on
+
+		spinRotationAngle += +6.0f * getAnimationScale();
 	}
 
-	protected void renderScene() {		
+	protected void renderScene() {
 		GL11.glPushMatrix();
 		{
-			//GL11.glTranslatef(0, 0, -7);
-			//GL11.glRotatef(20f, 1, 0, 0);
-			GL11.glRotatef(spinRotationAngle, 0, 0, 1);
-			
-			// how shiny are the front faces of the house (specular exponent)
-			float gripFrontShininess = 2.0f;
-			// specular reflection of the front faces of the house
-			float gripFrontSpecular[] = { 0.1f, 0.0f, 0.0f, 1.0f };
-			// diffuse reflection of the front faces of the house
-			float gripFrontDiffuse[] = { 0.6f, 0.6f, 0.6f, 1.0f };
+			// Renders the dart grip
 
-			// set the material properties for the house using OpenGL
+			GL11.glTranslatef(0, dartMovementY, 0);
+			GL11.glTranslatef(dartMovementX, 0, 0);
+			GL11.glRotatef(dartAngleY, 1, 0, 0);
+			GL11.glRotatef(dartAngleX, 0, 1, 0);
+			GL11.glRotatef(spinRotationAngle, 0, 0, 1);
+
+			// how shiny is the dart grip (specular exponent)
+			float gripFrontShininess = 2.0f;
+			// specular reflection of the dart grip
+			float gripFrontSpecular[] = { 0.1f, 0.0f, 0.0f, 1.0f };
+			// diffuse reflection of the dart grip
+			float gripFrontDiffuse[] = { 0.75f, 0.75f, 0.75f, 1.0f };
+
+			// set the material properties for the dart grip using OpenGL
 			GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, gripFrontShininess);
 			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(gripFrontSpecular));
 			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(gripFrontDiffuse));
 			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(gripFrontDiffuse));
-			
+
 			GL11.glCallList(gripList);
-			
+
 			GL11.glPushMatrix();
 			{
+				// Renders the dart spike
+
 				GL11.glTranslatef(0, 0, -2);
-				
+
 				GL11.glCallList(spikeList);
 			}
 			GL11.glPopMatrix();
 
 			GL11.glPushMatrix();
 			{
-				GL11.glTranslatef(0, 0.1f, 2.75f);
-				//GL11.glRotatef(45f, 0, 0, 1);
+				// Renders dart fin #1
 
-				// how shiny are the front faces of the house (specular exponent)
+				GL11.glTranslatef(0, 0.1f, 2.75f);
+
+				// how shiny are the fins (specular exponent)
 				float finFrontShininess = 2.0f;
-				// specular reflection of the front faces of the house
+				// specular reflection of the fins
 				float finFrontSpecular[] = { 0.1f, 0.0f, 0.0f, 1.0f };
-				// diffuse reflection of the front faces of the house
+				// diffuse reflection of the fins
 				float finFrontDiffuse[] = { 0.6f, 0.2f, 0.2f, 1.0f };
 
-				// set the material properties for the house using OpenGL
+				// set the material properties for the fins using OpenGL
 				GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, finFrontShininess);
 				GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(finFrontSpecular));
 				GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(finFrontDiffuse));
@@ -173,100 +211,72 @@ public class CS2150Coursework extends GraphicsLab {
 				GL11.glCallList(finList);
 			}
 			GL11.glPopMatrix();
-			
+
 			GL11.glPushMatrix();
 			{
+				// Renders dart fin #2
+
 				GL11.glTranslatef(0, -0.1f, 2.75f);
 				GL11.glRotatef(180f, 0, 0, 1);
 
-				// how shiny are the front faces of the house (specular exponent)
-				float finFrontShininess = 2.0f;
-				// specular reflection of the front faces of the house
-				float finFrontSpecular[] = { 0.1f, 0.0f, 0.0f, 1.0f };
-				// diffuse reflection of the front faces of the house
-				float finFrontDiffuse[] = { 0.6f, 0.2f, 0.2f, 1.0f };
-
-				// set the material properties for the house using OpenGL
-				GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, finFrontShininess);
-				GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(finFrontSpecular));
-				GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(finFrontDiffuse));
-				GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(finFrontDiffuse));
-
 				GL11.glCallList(finList);
 			}
 			GL11.glPopMatrix();
-			
+
 			GL11.glPushMatrix();
 			{
+				// Renders dart fin #3
+
 				GL11.glTranslatef(-0.1f, 0, 2.75f);
 				GL11.glRotatef(90f, 0, 0, 1);
 
-				// how shiny are the front faces of the house (specular exponent)
-				float finFrontShininess = 2.0f;
-				// specular reflection of the front faces of the house
-				float finFrontSpecular[] = { 0.1f, 0.0f, 0.0f, 1.0f };
-				// diffuse reflection of the front faces of the house
-				float finFrontDiffuse[] = { 0.6f, 0.2f, 0.2f, 1.0f };
-
-				// set the material properties for the house using OpenGL
-				GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, finFrontShininess);
-				GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(finFrontSpecular));
-				GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(finFrontDiffuse));
-				GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(finFrontDiffuse));
-
 				GL11.glCallList(finList);
 			}
 			GL11.glPopMatrix();
-			
+
 			GL11.glPushMatrix();
 			{
+				// Renders dart fin #4
+
 				GL11.glTranslatef(0.1f, 0, 2.75f);
 				GL11.glRotatef(270f, 0, 0, 1);
 
-				// how shiny are the front faces of the house (specular exponent)
-				float finFrontShininess = 2.0f;
-				// specular reflection of the front faces of the house
-				float finFrontSpecular[] = { 0.1f, 0.0f, 0.0f, 1.0f };
-				// diffuse reflection of the front faces of the house
-				float finFrontDiffuse[] = { 0.6f, 0.2f, 0.2f, 1.0f };
-
-				// set the material properties for the house using OpenGL
-				GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, finFrontShininess);
-				GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(finFrontSpecular));
-				GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(finFrontDiffuse));
-				GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(finFrontDiffuse));
-
 				GL11.glCallList(finList);
 			}
 			GL11.glPopMatrix();
 		}
-		
+
 		GL11.glPushMatrix();
 		{
+			// Renders the back of the dart
+
 			GL11.glTranslatef(0, 0, 3);
-			
+
 			GL11.glCallList(dartBackEndList);
 		}
 		GL11.glPopMatrix();
-		
+
 		GL11.glPopMatrix();
 
 	}
 
 	protected void setSceneCamera() {
-		// call the default behaviour defined in GraphicsLab. This will set a default
+		// call the default behaviour defined in GraphicsLab. This will set a
+		// default
 		// perspective projection
-		// and default camera settings ready for some custom camera positioning below...
+		// and default camera settings ready for some custom camera positioning
+		// below...
 		super.setSceneCamera();
 
-		// TODO: If it is appropriate for your scene, modify the camera's position and
+		// TODO: If it is appropriate for your scene, modify the camera's
+		// position and
 		// orientation here
 		// using a call to GL11.gluLookAt(...)
-		
-		GLU.gluLookAt(0.0f, 5.0f, 7.0f,   	// viewer location        
-  		      0.0f, 0.0f, 0.0f,    		// view point loc.
-  		      0.0f, 1.0f, 0.0f);			//view up vector
-		
+
+		GLU.gluLookAt(0.0f, 1f, 7.0f, // viewer location
+				0.0f, 0.0f, 0.0f, // view point loc.
+				0.0f, 1.0f, 0.0f); // view up vector
+
 	}
 
 	protected void cleanupScene() {// TODO: Clean up your resources here
