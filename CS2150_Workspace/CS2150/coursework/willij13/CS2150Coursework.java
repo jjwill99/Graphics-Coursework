@@ -58,6 +58,8 @@ public class CS2150Coursework extends GraphicsLab {
 	 */
 	private final int planeList = 5;
 
+	private final int boardList = 6;
+
 	private float spinRotationAngle = 0.0f;
 
 	private float dartAngleY = 0.0f;
@@ -67,6 +69,12 @@ public class CS2150Coursework extends GraphicsLab {
 	private float dartAngleX = 0.0f;
 
 	private float dartMovementX = 0.0f;
+
+	private float moving = 0.0f;
+
+	private float heightView = 0.0f;
+
+	private float widthView = 0.0f;
 
 	private boolean thrown = false;
 
@@ -140,6 +148,11 @@ public class CS2150Coursework extends GraphicsLab {
 			drawUnitPlane();
 		}
 		GL11.glEndList();
+		GL11.glNewList(boardList, GL11.GL_COMPILE);
+		{
+			drawUnitDartBoard();
+		}
+		GL11.glEndList();
 	}
 
 	protected void checkSceneInput() {
@@ -147,25 +160,49 @@ public class CS2150Coursework extends GraphicsLab {
 			if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
 				dartAngleY = 10.0f;
 				dartMovementY += 0.001f;
+				if (dartYLimit()) {
+					dartMovementY = 1.8f;
+					heightView -= 0.001f;
+				}
 			} else if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
 				dartAngleY = -10.0f;
 				dartMovementY -= 0.001f;
+				if (dartYLimit()) {
+					dartMovementY = -0.6f;
+					heightView += 0.001f;
+					if (heightView > 0.0f) {
+						dartAngleY = 0.0f;
+						heightView = 0.0f;
+					}
+				}
 			} else if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
 				dartAngleX = 5.0f;
 				dartMovementX -= 0.001f;
+				if (dartXLimit()) {
+					dartMovementX = -1.8f;
+					widthView += 0.001f;
+				}
 			} else if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
 				dartAngleX = -5.0f;
 				dartMovementX += 0.001f;
+				if (dartXLimit()) {
+					dartMovementX = 1.8f;
+					widthView -= 0.001f;
+				}
 			} else {
 				dartAngleY = 0.0f;
 				dartAngleX = 0.0f;
 			}
+
+			moving += 0.01f;
+			checkDartHit();
 		} else {
 			spinRotationAngle = 45f;
 		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
 			// throw dart
+			// TODO: when space is help at end, movement continues
 			thrown = true;
 		}
 
@@ -184,11 +221,11 @@ public class CS2150Coursework extends GraphicsLab {
 		// can be made faster or slower depending on the machine you are working
 		// on
 
-		spinRotationAngle += +3.0f * getAnimationScale();
+		spinRotationAngle += +8.0f * getAnimationScale();
 	}
 
 	protected void renderScene() {
-		// draw the ground plane
+		// draw ground plane #1
 		GL11.glPushMatrix();
 		{
 			// disable lighting calculations so that they don't affect
@@ -203,8 +240,8 @@ public class CS2150Coursework extends GraphicsLab {
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, groundTextures.getTextureID());
 
 			// position, scale and draw the ground plane using its display list
-			GL11.glTranslatef(0.0f, -1.0f, -7.5f);
-			GL11.glScalef(25.0f, 1.0f, 20.0f);
+			GL11.glTranslatef(0.0f + widthView, -1.0f + heightView, -7.5f + moving);
+			GL11.glScalef(25.0f, 1.0f, 40.0f);
 			GL11.glCallList(planeList);
 
 			// disable textures and reset any local lighting changes
@@ -213,7 +250,32 @@ public class CS2150Coursework extends GraphicsLab {
 		}
 		GL11.glPopMatrix();
 
-		// draw the wall plane
+		// add ground plane #2
+		GL11.glPushMatrix();
+		{
+			// disable lighting calculations so that they don't affect
+			// the appearance of the texture
+			GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
+			GL11.glDisable(GL11.GL_LIGHTING);
+			// change the geometry colour to white so that the texture
+			// is bright and details can be seen clearly
+			Colour.WHITE.submit();
+			// enable texturing and bind an appropriate texture
+			GL11.glEnable(GL11.GL_TEXTURE_2D);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, groundTextures.getTextureID());
+
+			// position, scale and draw the ground plane using its display list
+			GL11.glTranslatef(0.0f + widthView, -1.0f + heightView, -47.5f + moving);
+			GL11.glScalef(25.0f, 1.0f, 40.0f);
+			GL11.glCallList(planeList);
+
+			// disable textures and reset any local lighting changes
+			GL11.glDisable(GL11.GL_TEXTURE_2D);
+			GL11.glPopAttrib();
+		}
+		GL11.glPopMatrix();
+
+		// draw the back wall plane
 		GL11.glPushMatrix();
 		{
 			// disable lighting calculations so that they don't affect
@@ -228,7 +290,7 @@ public class CS2150Coursework extends GraphicsLab {
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, wallTextures.getTextureID());
 
 			// position, scale and draw the back plane using its display list
-			GL11.glTranslatef(0.0f, 4.0f, -17.f);
+			GL11.glTranslatef(0.0f + widthView, 4.0f + heightView, -67f + moving);
 			GL11.glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
 			GL11.glScalef(25.0f, 1.0f, 10.0f);
 			GL11.glCallList(planeList);
@@ -236,6 +298,191 @@ public class CS2150Coursework extends GraphicsLab {
 			// disable textures and reset any local lighting changes
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
 			GL11.glPopAttrib();
+		}
+		GL11.glPopMatrix();
+
+		// draw the left wall plane #1
+		GL11.glPushMatrix();
+		{
+			// disable lighting calculations so that they don't affect
+			// the appearance of the texture
+			GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
+			GL11.glDisable(GL11.GL_LIGHTING);
+			// change the geometry colour to white so that the texture
+			// is bright and details can be seen clearly
+			Colour.WHITE.submit();
+			// enable texturing and bind an appropriate texture
+			GL11.glEnable(GL11.GL_TEXTURE_2D);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, wallTextures.getTextureID());
+
+			// position, scale and draw the back plane using its display list
+			GL11.glTranslatef(-12.5f + widthView, 4.0f + heightView, -7.5f + moving);
+			GL11.glRotatef(90.0f, 1.0f, 0, 0);
+			GL11.glRotatef(270.0f, 0.0f, 0.0f, 1.0f);
+			GL11.glScalef(25.0f, 1.0f, 10.0f);
+			GL11.glCallList(planeList);
+
+			// disable textures and reset any local lighting changes
+			GL11.glDisable(GL11.GL_TEXTURE_2D);
+			GL11.glPopAttrib();
+		}
+		GL11.glPopMatrix();
+
+		// draw the left wall plane #2
+		GL11.glPushMatrix();
+		{
+			// disable lighting calculations so that they don't affect
+			// the appearance of the texture
+			GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
+			GL11.glDisable(GL11.GL_LIGHTING);
+			// change the geometry colour to white so that the texture
+			// is bright and details can be seen clearly
+			Colour.WHITE.submit();
+			// enable texturing and bind an appropriate texture
+			GL11.glEnable(GL11.GL_TEXTURE_2D);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, wallTextures.getTextureID());
+
+			// position, scale and draw the back plane using its display list
+			GL11.glTranslatef(-12.5f + widthView, 4.0f + heightView, -32f + moving);
+			GL11.glRotatef(90.0f, 1.0f, 0, 0);
+			GL11.glRotatef(270.0f, 0.0f, 0.0f, 1.0f);
+			GL11.glScalef(25.0f, 1.0f, 10.0f);
+			GL11.glCallList(planeList);
+
+			// disable textures and reset any local lighting changes
+			GL11.glDisable(GL11.GL_TEXTURE_2D);
+			GL11.glPopAttrib();
+		}
+		GL11.glPopMatrix();
+
+		// draw the left wall plane #3
+		GL11.glPushMatrix();
+		{
+			// disable lighting calculations so that they don't affect
+			// the appearance of the texture
+			GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
+			GL11.glDisable(GL11.GL_LIGHTING);
+			// change the geometry colour to white so that the texture
+			// is bright and details can be seen clearly
+			Colour.WHITE.submit();
+			// enable texturing and bind an appropriate texture
+			GL11.glEnable(GL11.GL_TEXTURE_2D);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, wallTextures.getTextureID());
+
+			// position, scale and draw the back plane using its display list
+			GL11.glTranslatef(-12.5f + widthView, 4.0f + heightView, -57f + moving);
+			GL11.glRotatef(90.0f, 1.0f, 0, 0);
+			GL11.glRotatef(270.0f, 0.0f, 0.0f, 1.0f);
+			GL11.glScalef(25.0f, 1.0f, 10.0f);
+			GL11.glCallList(planeList);
+
+			// disable textures and reset any local lighting changes
+			GL11.glDisable(GL11.GL_TEXTURE_2D);
+			GL11.glPopAttrib();
+		}
+		GL11.glPopMatrix();
+
+		// draw the right wall plane #1
+		GL11.glPushMatrix();
+		{
+			// disable lighting calculations so that they don't affect
+			// the appearance of the texture
+			GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
+			GL11.glDisable(GL11.GL_LIGHTING);
+			// change the geometry colour to white so that the texture
+			// is bright and details can be seen clearly
+			Colour.WHITE.submit();
+			// enable texturing and bind an appropriate texture
+			GL11.glEnable(GL11.GL_TEXTURE_2D);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, wallTextures.getTextureID());
+
+			// position, scale and draw the back plane using its display list
+			GL11.glTranslatef(12.5f + widthView, 4.0f + heightView, -7.5f + moving);
+			GL11.glRotatef(90.0f, 1.0f, 0, 0);
+			GL11.glRotatef(90.0f, 0.0f, 0.0f, 1.0f);
+			GL11.glScalef(25.0f, 1.0f, 10.0f);
+			GL11.glCallList(planeList);
+
+			// disable textures and reset any local lighting changes
+			GL11.glDisable(GL11.GL_TEXTURE_2D);
+			GL11.glPopAttrib();
+		}
+		GL11.glPopMatrix();
+
+		// draw the right wall plane #2
+		GL11.glPushMatrix();
+		{
+			// disable lighting calculations so that they don't affect
+			// the appearance of the texture
+			GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
+			GL11.glDisable(GL11.GL_LIGHTING);
+			// change the geometry colour to white so that the texture
+			// is bright and details can be seen clearly
+			Colour.WHITE.submit();
+			// enable texturing and bind an appropriate texture
+			GL11.glEnable(GL11.GL_TEXTURE_2D);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, wallTextures.getTextureID());
+
+			// position, scale and draw the back plane using its display list
+			GL11.glTranslatef(12.5f + widthView, 4.0f + heightView, -32f + moving);
+			GL11.glRotatef(90.0f, 1.0f, 0, 0);
+			GL11.glRotatef(90.0f, 0.0f, 0.0f, 1.0f);
+			GL11.glScalef(25.0f, 1.0f, 10.0f);
+			GL11.glCallList(planeList);
+
+			// disable textures and reset any local lighting changes
+			GL11.glDisable(GL11.GL_TEXTURE_2D);
+			GL11.glPopAttrib();
+		}
+		GL11.glPopMatrix();
+
+		// draw the right wall plane #3
+		GL11.glPushMatrix();
+		{
+			// disable lighting calculations so that they don't affect
+			// the appearance of the texture
+			GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
+			GL11.glDisable(GL11.GL_LIGHTING);
+			// change the geometry colour to white so that the texture
+			// is bright and details can be seen clearly
+			Colour.WHITE.submit();
+			// enable texturing and bind an appropriate texture
+			GL11.glEnable(GL11.GL_TEXTURE_2D);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, wallTextures.getTextureID());
+
+			// position, scale and draw the back plane using its display list
+			GL11.glTranslatef(12.5f + widthView, 4.0f + heightView, -57f + moving);
+			GL11.glRotatef(90.0f, 1.0f, 0, 0);
+			GL11.glRotatef(90.0f, 0.0f, 0.0f, 1.0f);
+			GL11.glScalef(25.0f, 1.0f, 10.0f);
+			GL11.glCallList(planeList);
+
+			// disable textures and reset any local lighting changes
+			GL11.glDisable(GL11.GL_TEXTURE_2D);
+			GL11.glPopAttrib();
+		}
+		GL11.glPopMatrix();
+
+		// Renders the dart board
+		//TODO: add face to the dart board...or create the dart board from scratch
+		GL11.glPushMatrix();
+		{
+			GL11.glTranslatef(0, 3, -67 + moving);
+			
+			// how shiny is the dart grip (specular exponent)
+			float gripFrontShininess = 40.0f;
+			// specular reflection of the dart grip
+			float gripFrontSpecular[] = { 0.1f, 0.0f, 0.0f, 1.0f };
+			// diffuse reflection of the dart grip
+			float gripFrontDiffuse[] = { 0.6f, 0.6f, 0.6f, 1.0f };
+
+			// set the material properties for the dart grip using OpenGL
+			GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, gripFrontShininess);
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(gripFrontSpecular));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(gripFrontDiffuse));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(gripFrontDiffuse));
+
+			GL11.glCallList(boardList);
 		}
 		GL11.glPopMatrix();
 
@@ -380,10 +627,35 @@ public class CS2150Coursework extends GraphicsLab {
 	protected void cleanupScene() {// TODO: Clean up your resources here
 	}
 
+	private void checkDartHit() {
+		if (-67.0f + moving >= -1.0f) {
+			thrown = false;
+		}
+	}
+
+	private boolean dartXLimit() {
+		if (dartMovementX > 1.8f || dartMovementX < -1.8f) {
+			return true;
+		}
+		return false;
+	}
+
+	private boolean dartYLimit() {
+		if (dartMovementY > 1.8f || dartMovementY < -0.6f) {
+			return true;
+		}
+		return false;
+	}
+
 	private void resetAnimations() {
 		thrown = false;
 		dartMovementY = 0.0f;
 		dartMovementX = 0.0f;
+		dartAngleX = 0.0f;
+		dartAngleY = 0.0f;
+		heightView = 0.0f;
+		widthView = 0.0f;
+		moving = 0.0f;
 	}
 
 	private void drawUnitGrip() {
@@ -488,7 +760,8 @@ public class CS2150Coursework extends GraphicsLab {
 		Vertex v3 = new Vertex(0.5f, 0.0f, 0.5f); // right, front
 		Vertex v4 = new Vertex(-0.5f, 0.0f, 0.5f); // left, front
 
-		// draw the plane geometry. order the vertices so that the plane faces up
+		// draw the plane geometry. order the vertices so that the plane faces
+		// up
 		GL11.glBegin(GL11.GL_POLYGON);
 		{
 			new Normal(v4.toVector(), v3.toVector(), v2.toVector(), v1.toVector()).submit();
@@ -524,6 +797,10 @@ public class CS2150Coursework extends GraphicsLab {
 			GL11.glEnd();
 			GL11.glPopAttrib();
 		}
+	}
+
+	private void drawUnitDartBoard() {
+		new Cylinder().draw(1, 1, 0.5f, 20, 20);
 	}
 
 }
