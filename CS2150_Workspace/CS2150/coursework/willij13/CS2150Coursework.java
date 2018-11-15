@@ -93,8 +93,8 @@ public class CS2150Coursework extends GraphicsLab {
 		// load the textures
 
 		// carpet.jpg not in correct size
-		groundTextures = loadTexture("coursework/willij13/textures/metal_floor.jpg");
-		wallTextures = loadTexture("coursework/willij13/textures/bricks.jpg");
+		groundTextures = loadTexture("coursework/willij13/textures/wood_floor.jpg");
+		wallTextures = loadTexture("coursework/willij13/textures/brick_wall.jpg");
 
 		// global ambient light level
 		float globalAmbient[] = { 0.8f, 0.8f, 0.8f, 1.0f };
@@ -221,7 +221,7 @@ public class CS2150Coursework extends GraphicsLab {
 		// can be made faster or slower depending on the machine you are working
 		// on
 
-		spinRotationAngle += +8.0f * getAnimationScale();
+		spinRotationAngle += +40.0f * getAnimationScale();
 	}
 
 	protected void renderScene() {
@@ -467,7 +467,7 @@ public class CS2150Coursework extends GraphicsLab {
 		//TODO: add face to the dart board...or create the dart board from scratch
 		GL11.glPushMatrix();
 		{
-			GL11.glTranslatef(0, 3, -67 + moving);
+			GL11.glTranslatef(0 + widthView, 3 + heightView, -67 + moving);
 			
 			// how shiny is the dart grip (specular exponent)
 			float gripFrontShininess = 40.0f;
@@ -501,7 +501,7 @@ public class CS2150Coursework extends GraphicsLab {
 			// specular reflection of the dart grip
 			float gripFrontSpecular[] = { 0.1f, 0.0f, 0.0f, 1.0f };
 			// diffuse reflection of the dart grip
-			float gripFrontDiffuse[] = { 0.6f, 0.6f, 0.6f, 1.0f };
+			float gripFrontDiffuse[] = { 0.2f, 0.2f, 0.2f, 1.0f };
 
 			// set the material properties for the dart grip using OpenGL
 			GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, gripFrontShininess);
@@ -517,6 +517,19 @@ public class CS2150Coursework extends GraphicsLab {
 
 				GL11.glTranslatef(0, 0, -2);
 
+				// how shiny is the dart spike (specular exponent)
+				float spikeFrontShininess = 40.0f;
+				// specular reflection of the dart spike
+				float spikeFrontSpecular[] = { 0.1f, 0.0f, 0.0f, 1.0f };
+				// diffuse reflection of the dart spike
+				float spikeFrontDiffuse[] = { 0.6f, 0.6f, 0.6f, 1.0f };
+
+				// set the material properties for the dart grip using OpenGL
+				GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, spikeFrontShininess);
+				GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(spikeFrontSpecular));
+				GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(spikeFrontDiffuse));
+				GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(spikeFrontDiffuse));
+				
 				GL11.glCallList(spikeList);
 			}
 			GL11.glPopMatrix();
