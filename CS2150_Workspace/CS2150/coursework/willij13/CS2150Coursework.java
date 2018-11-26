@@ -11,6 +11,7 @@ package coursework.willij13;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.Cylinder;
+import org.lwjgl.util.glu.Disk;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.glu.Sphere;
 import org.lwjgl.input.Keyboard;
@@ -18,8 +19,8 @@ import org.newdawn.slick.opengl.Texture;
 import GraphicsLab.*;
 
 /**
- * Simulation shows a dart that is thrown through the air, and hit an [INSERT
- * OBJECT HERE]. With the extra challenge of flying through moving rings.
+ * Simulation shows a dart that is thrown through the air, and hit a dart board.
+ * With the extra challenge of flying through moving rings.
  *
  * <p>
  * Controls:
@@ -30,8 +31,10 @@ import GraphicsLab.*;
  * <li>While viewing the scene along the x, y or z axis, use the up and down
  * cursor keys to increase or decrease the viewpoint's distance from the scene
  * origin
+ * <li>Press the space button to initiate the throw of the dart.
  * <li>Press/hold w, a, s and d keys to move the dart around the scene while in
  * flight.
+ * <li>Press r to reset the animation.
  * </ul>
  * TODO: Add any additional controls for your sample to the list above
  *
@@ -57,9 +60,17 @@ public class CS2150Coursework extends GraphicsLab {
 	 * display list id of plane
 	 */
 	private final int planeList = 5;
-
+	/**
+	 * display list id of the dart board
+	 */
 	private final int boardList = 6;
-
+	/**
+	 * display list id of the ring
+	 */
+	private final int ringList = 7;
+	
+	private float ringAngle = 0.0f;
+	
 	private float spinRotationAngle = 0.0f;
 
 	private float dartAngleY = 0.0f;
@@ -83,6 +94,8 @@ public class CS2150Coursework extends GraphicsLab {
 
 	private Texture wallTextures;
 
+	private Texture targetTextures;
+
 	// TODO: Feel free to change the window title and default animation scale
 	// here
 	public static void main(String args[]) {
@@ -95,6 +108,7 @@ public class CS2150Coursework extends GraphicsLab {
 		// carpet.jpg not in correct size
 		groundTextures = loadTexture("coursework/willij13/textures/wood_floor.jpg");
 		wallTextures = loadTexture("coursework/willij13/textures/brick_wall.jpg");
+		targetTextures = loadTexture("coursework/willij13/textures/target.png");
 
 		// global ambient light level
 		float globalAmbient[] = { 0.8f, 0.8f, 0.8f, 1.0f };
@@ -153,23 +167,29 @@ public class CS2150Coursework extends GraphicsLab {
 			drawUnitDartBoard();
 		}
 		GL11.glEndList();
+		GL11.glEndList();
+		GL11.glNewList(ringList, GL11.GL_COMPILE);
+		{
+			drawUnitRing();
+		}
+		GL11.glEndList();
 	}
 
 	protected void checkSceneInput() {
 		if (thrown == true) {
 			if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
 				dartAngleY = 10.0f;
-				dartMovementY += 0.001f;
+				dartMovementY += 0.01f;
 				if (dartYLimit()) {
 					dartMovementY = 1.8f;
-					heightView -= 0.001f;
+					heightView -= 0.01f;
 				}
 			} else if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
 				dartAngleY = -10.0f;
-				dartMovementY -= 0.001f;
+				dartMovementY -= 0.01f;
 				if (dartYLimit()) {
 					dartMovementY = -0.6f;
-					heightView += 0.001f;
+					heightView += 0.01f;
 					if (heightView > 0.0f) {
 						dartAngleY = 0.0f;
 						heightView = 0.0f;
@@ -177,17 +197,17 @@ public class CS2150Coursework extends GraphicsLab {
 				}
 			} else if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
 				dartAngleX = 5.0f;
-				dartMovementX -= 0.001f;
+				dartMovementX -= 0.01f;
 				if (dartXLimit()) {
 					dartMovementX = -1.8f;
-					widthView += 0.001f;
+					widthView += 0.01f;
 				}
 			} else if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
 				dartAngleX = -5.0f;
-				dartMovementX += 0.001f;
+				dartMovementX += 0.01f;
 				if (dartXLimit()) {
 					dartMovementX = 1.8f;
-					widthView -= 0.001f;
+					widthView -= 0.01f;
 				}
 			} else {
 				dartAngleY = 0.0f;
@@ -222,6 +242,8 @@ public class CS2150Coursework extends GraphicsLab {
 		// on
 
 		spinRotationAngle += +40.0f * getAnimationScale();
+	
+		ringAngle += 10.0f * getAnimationScale();
 	}
 
 	protected void renderScene() {
@@ -464,11 +486,21 @@ public class CS2150Coursework extends GraphicsLab {
 		GL11.glPopMatrix();
 
 		// Renders the dart board
-		//TODO: add face to the dart board...or create the dart board from scratch
 		GL11.glPushMatrix();
 		{
+			// disable lighting calculations so that they don't affect
+			// the appearance of the texture
+			GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
+			GL11.glDisable(GL11.GL_LIGHTING);
+			// change the geometry colour to white so that the texture
+			// is bright and details can be seen clearly
+			Colour.WHITE.submit();
+			// enable texturing and bind an appropriate texture
+			GL11.glEnable(GL11.GL_TEXTURE_2D);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, targetTextures.getTextureID());
+
 			GL11.glTranslatef(0 + widthView, 3 + heightView, -67 + moving);
-			
+
 			// how shiny is the dart grip (specular exponent)
 			float gripFrontShininess = 40.0f;
 			// specular reflection of the dart grip
@@ -483,6 +515,42 @@ public class CS2150Coursework extends GraphicsLab {
 			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(gripFrontDiffuse));
 
 			GL11.glCallList(boardList);
+
+			// disable textures and reset any local lighting changes
+			GL11.glDisable(GL11.GL_TEXTURE_2D);
+			GL11.glPopAttrib();
+		}
+		GL11.glPopMatrix();
+
+		// Renders ring #1
+		GL11.glPushMatrix();
+		{
+			GL11.glTranslatef(0 + widthView, 2 + heightView, -37 + moving);
+			GL11.glRotatef(ringAngle, 0, 0, 1);
+			// how shiny is the dart grip (specular exponent)
+			float ringFrontShininess = 40.0f;
+			// specular reflection of the dart grip
+			float ringFrontSpecular[] = { 0.1f, 0.0f, 0.0f, 1.0f };
+			// diffuse reflection of the dart grip
+			float ringFrontDiffuse[] = { 0.2f, 0.6f, 0.2f, 1.0f };
+
+			// set the material properties for the dart grip using OpenGL
+			GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, ringFrontShininess);
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(ringFrontSpecular));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(ringFrontDiffuse));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(ringFrontDiffuse));
+
+			GL11.glCallList(ringList);
+			
+			//Renders ring #2
+			GL11.glPushMatrix();
+			{
+				GL11.glTranslatef(0 + widthView, 2 + heightView, -37 + moving);
+				GL11.glScalef(0.9f, 0.9f, 0.9f);
+				
+				GL11.glCallList(ringList);
+			}
+			GL11.glPopMatrix();
 		}
 		GL11.glPopMatrix();
 
@@ -529,7 +597,7 @@ public class CS2150Coursework extends GraphicsLab {
 				GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(spikeFrontSpecular));
 				GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(spikeFrontDiffuse));
 				GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(spikeFrontDiffuse));
-				
+
 				GL11.glCallList(spikeList);
 			}
 			GL11.glPopMatrix();
@@ -589,31 +657,30 @@ public class CS2150Coursework extends GraphicsLab {
 				GL11.glCallList(finList);
 			}
 			GL11.glPopMatrix();
+
+			GL11.glPushMatrix();
+			{
+				// Renders the back of the dart
+
+				// how shiny is the back (specular exponent)
+				float finFrontShininess = 2.0f;
+				// specular reflection of the back
+				float finFrontSpecular[] = { 0.1f, 0.0f, 0.0f, 1.0f };
+				// diffuse reflection of the back
+				float finFrontDiffuse[] = { 0.8f, 0.6f, 0.2f, 1.0f };
+
+				// set the material properties for the back using OpenGL
+				GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, finFrontShininess);
+				GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(finFrontSpecular));
+				GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(finFrontDiffuse));
+				GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(finFrontDiffuse));
+
+				GL11.glTranslatef(0, 0, 3);
+
+				GL11.glCallList(dartBackEndList);
+			}
+			GL11.glPopMatrix();
 		}
-
-		GL11.glPushMatrix();
-		{
-			// Renders the back of the dart
-
-			// how shiny is the back (specular exponent)
-			float finFrontShininess = 2.0f;
-			// specular reflection of the back
-			float finFrontSpecular[] = { 0.1f, 0.0f, 0.0f, 1.0f };
-			// diffuse reflection of the back
-			float finFrontDiffuse[] = { 0.8f, 0.6f, 0.2f, 1.0f };
-
-			// set the material properties for the back using OpenGL
-			GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, finFrontShininess);
-			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(finFrontSpecular));
-			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(finFrontDiffuse));
-			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(finFrontDiffuse));
-
-			GL11.glTranslatef(0, 0, 3);
-
-			GL11.glCallList(dartBackEndList);
-		}
-		GL11.glPopMatrix();
-
 		GL11.glPopMatrix();
 
 	}
@@ -813,7 +880,93 @@ public class CS2150Coursework extends GraphicsLab {
 	}
 
 	private void drawUnitDartBoard() {
-		new Cylinder().draw(1, 1, 0.5f, 20, 20);
+		Vertex v1 = new Vertex(-2.5f, 2.5f, 0.1f);
+		Vertex v2 = new Vertex(2.5f, 2.5f, 0.1f);
+		Vertex v3 = new Vertex(2.5f, -2.5f, 0.1f);
+		Vertex v4 = new Vertex(-2.5f, -2.5f, 0.1f);
+		Vertex v5 = new Vertex(-2.5f, 2.5f, -0.1f);
+		Vertex v6 = new Vertex(2.5f, 2.5f, -0.1f);
+		Vertex v7 = new Vertex(2.5f, -2.5f, -0.1f);
+		Vertex v8 = new Vertex(-2.5f, -2.5f, -0.1f);
+
+		// draw the near face:
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			new Normal(v4.toVector(), v3.toVector(), v2.toVector(), v1.toVector()).submit();
+			GL11.glTexCoord2f(0.0f, 0.0f);
+			v4.submit();
+			GL11.glTexCoord2f(1.0f, 0.0f);
+			v3.submit();
+			GL11.glTexCoord2f(1.0f, 1.0f);
+			v2.submit();
+			GL11.glTexCoord2f(0.0f, 1.0f);
+			v1.submit();
+		}
+		GL11.glEnd();
+
+		// draw the far face:
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			new Normal(v8.toVector(), v7.toVector(), v6.toVector(), v5.toVector()).submit();
+
+			v8.submit();
+			v7.submit();
+			v6.submit();
+			v5.submit();
+		}
+		GL11.glEnd();
+
+		// draw the left face:
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			new Normal(v1.toVector(), v5.toVector(), v8.toVector(), v4.toVector()).submit();
+
+			v1.submit();
+			v5.submit();
+			v8.submit();
+			v4.submit();
+		}
+		GL11.glEnd();
+
+		// draw the right face:
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			new Normal(v2.toVector(), v3.toVector(), v7.toVector(), v6.toVector()).submit();
+
+			v2.submit();
+			v3.submit();
+			v7.submit();
+			v6.submit();
+		}
+		GL11.glEnd();
+
+		// draw the top face:
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			new Normal(v1.toVector(), v2.toVector(), v6.toVector(), v5.toVector()).submit();
+
+			v1.submit();
+			v2.submit();
+			v6.submit();
+			v5.submit();
+		}
+		GL11.glEnd();
+
+		// draw the bottom face:
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			new Normal(v3.toVector(), v4.toVector(), v7.toVector(), v8.toVector()).submit();
+
+			v3.submit();
+			v4.submit();
+			v7.submit();
+			v8.submit();
+		}
+		GL11.glEnd();
+	}
+
+	private void drawUnitRing() {
+		new Disk().draw(0.4f, 0.5f, 20, 20);
 	}
 
 }
