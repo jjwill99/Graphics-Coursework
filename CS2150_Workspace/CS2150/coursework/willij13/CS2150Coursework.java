@@ -545,7 +545,37 @@ public class CS2150Coursework extends GraphicsLab {
 			//Renders ring #2
 			GL11.glPushMatrix();
 			{
-				GL11.glTranslatef(0 + widthView, 2 + heightView, -37 + moving);
+				GL11.glTranslatef(0, 2, 0);
+				GL11.glScalef(0.9f, 0.9f, 0.9f);
+				
+				GL11.glCallList(ringList);
+			}
+			GL11.glPopMatrix();
+			
+			//Renders ring #3
+			GL11.glPushMatrix();
+			{
+				GL11.glTranslatef(0, -2, 0);
+				GL11.glScalef(0.9f, 0.9f, 0.9f);
+				
+				GL11.glCallList(ringList);
+			}
+			GL11.glPopMatrix();
+			
+			//Renders ring #4
+			GL11.glPushMatrix();
+			{
+				GL11.glTranslatef(2, 0, 0);
+				GL11.glScalef(0.9f, 0.9f, 0.9f);
+				
+				GL11.glCallList(ringList);
+			}
+			GL11.glPopMatrix();
+			
+			//Renders ring #5
+			GL11.glPushMatrix();
+			{
+				GL11.glTranslatef(-2, 0, 0);
 				GL11.glScalef(0.9f, 0.9f, 0.9f);
 				
 				GL11.glCallList(ringList);
