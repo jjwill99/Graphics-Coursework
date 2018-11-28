@@ -68,9 +68,17 @@ public class CS2150Coursework extends GraphicsLab {
 	 * display list id of the ring
 	 */
 	private final int ringList = 7;
-	
+	/**
+	 * display list id of the table top
+	 */
+	private final int tableTopList = 8;
+	/**
+	 * display list id of the table leg
+	 */
+	private final int tableLegList = 9;
+
 	private float ringAngle = 0.0f;
-	
+
 	private float spinRotationAngle = 0.0f;
 
 	private float dartAngleY = 0.0f;
@@ -89,7 +97,7 @@ public class CS2150Coursework extends GraphicsLab {
 
 	private boolean thrown = false;
 
-	/** ids for nearest, linear and mipmapped textures for the ground plane */
+	/** textures */
 	private Texture groundTextures;
 
 	private Texture wallTextures;
@@ -104,8 +112,6 @@ public class CS2150Coursework extends GraphicsLab {
 
 	protected void initScene() throws Exception {
 		// load the textures
-
-		// carpet.jpg not in correct size
 		groundTextures = loadTexture("coursework/willij13/textures/wood_floor.jpg");
 		wallTextures = loadTexture("coursework/willij13/textures/brick_wall.jpg");
 		targetTextures = loadTexture("coursework/willij13/textures/target.png");
@@ -171,6 +177,16 @@ public class CS2150Coursework extends GraphicsLab {
 		GL11.glNewList(ringList, GL11.GL_COMPILE);
 		{
 			drawUnitRing();
+		}
+		GL11.glEndList();
+		GL11.glNewList(tableTopList, GL11.GL_COMPILE);
+		{
+			drawUnitTableTop();
+		}
+		GL11.glEndList();
+		GL11.glNewList(tableLegList, GL11.GL_COMPILE);
+		{
+			drawUnitTableLeg();
 		}
 		GL11.glEndList();
 	}
@@ -242,7 +258,7 @@ public class CS2150Coursework extends GraphicsLab {
 		// on
 
 		spinRotationAngle += +40.0f * getAnimationScale();
-	
+
 		ringAngle += 10.0f * getAnimationScale();
 	}
 
@@ -541,14 +557,61 @@ public class CS2150Coursework extends GraphicsLab {
 			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(ringFrontDiffuse));
 
 			GL11.glCallList(ringList);
-			
-			//Renders ring #2
+
+			// Renders ring #2
 			GL11.glPushMatrix();
 			{
-				GL11.glTranslatef(0 + widthView, 2 + heightView, -37 + moving);
+				GL11.glTranslatef(0, 2, 0);
 				GL11.glScalef(0.9f, 0.9f, 0.9f);
-				
+
 				GL11.glCallList(ringList);
+			}
+			GL11.glPopMatrix();
+
+			// Renders ring #3
+			GL11.glPushMatrix();
+			{
+				GL11.glTranslatef(0, -2, 0);
+				GL11.glScalef(0.9f, 0.9f, 0.9f);
+
+				GL11.glCallList(ringList);
+			}
+			GL11.glPopMatrix();
+
+			// Renders ring #4
+			GL11.glPushMatrix();
+			{
+				GL11.glTranslatef(2, 0, 0);
+				GL11.glScalef(0.9f, 0.9f, 0.9f);
+
+				GL11.glCallList(ringList);
+			}
+			GL11.glPopMatrix();
+
+			// Renders ring #5
+			GL11.glPushMatrix();
+			{
+				GL11.glTranslatef(-2, 0, 0);
+				GL11.glScalef(0.9f, 0.9f, 0.9f);
+
+				GL11.glCallList(ringList);
+			}
+			GL11.glPopMatrix();
+		}
+		GL11.glPopMatrix();
+
+		// Renders a table
+		GL11.glPushMatrix();
+		{
+			GL11.glTranslatef(-5 + widthView, 1.0f + heightView, -15 + moving);
+			
+			GL11.glCallList(tableTopList);
+
+			// Renders table leg #1
+			GL11.glPushMatrix();
+			{
+				GL11.glTranslatef(-0.4f, -0.6f, 0.9f);
+				GL11.glCallList(tableLegList);
 			}
 			GL11.glPopMatrix();
 		}
@@ -967,6 +1030,172 @@ public class CS2150Coursework extends GraphicsLab {
 
 	private void drawUnitRing() {
 		new Disk().draw(0.4f, 0.5f, 20, 20);
+	}
+
+	private void drawUnitTableLeg() {
+		Vertex v1 = new Vertex(-0.1f, 0.5f, 0.1f);
+		Vertex v2 = new Vertex(0.1f, 0.5f, 0.1f);
+		Vertex v3 = new Vertex(-0.1f, -0.5f, 0.1f);
+		Vertex v4 = new Vertex(0.1f, -0.5f, 0.1f);
+		Vertex v5 = new Vertex(-0.1f, 0.5f, -0.1f);
+		Vertex v6 = new Vertex(0.1f, 0.5f, -0.1f);
+		Vertex v7 = new Vertex(-0.1f, -0.5f, -0.1f);
+		Vertex v8 = new Vertex(0.1f, -0.5f, -0.1f);
+
+		// draw the near face:
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			new Normal(v3.toVector(), v4.toVector(), v2.toVector(), v1.toVector()).submit();
+			v3.submit();
+			v4.submit();
+			v2.submit();
+			v1.submit();
+		}
+		GL11.glEnd();
+
+		// draw the far face:
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			new Normal(v8.toVector(), v7.toVector(), v5.toVector(), v6.toVector()).submit();
+
+			v8.submit();
+			v7.submit();
+			v5.submit();
+			v6.submit();
+		}
+		GL11.glEnd();
+
+		// draw the left face:
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			new Normal(v1.toVector(), v5.toVector(), v7.toVector(), v3.toVector()).submit();
+
+			v1.submit();
+			v5.submit();
+			v7.submit();
+			v3.submit();
+		}
+		GL11.glEnd();
+
+		// draw the right face:
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			new Normal(v2.toVector(), v4.toVector(), v8.toVector(), v6.toVector()).submit();
+
+			v2.submit();
+			v4.submit();
+			v8.submit();
+			v6.submit();
+		}
+		GL11.glEnd();
+
+		// draw the top face:
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			new Normal(v1.toVector(), v2.toVector(), v6.toVector(), v5.toVector()).submit();
+
+			v1.submit();
+			v2.submit();
+			v6.submit();
+			v5.submit();
+		}
+		GL11.glEnd();
+
+		// draw the bottom face:
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			new Normal(v4.toVector(), v3.toVector(), v7.toVector(), v8.toVector()).submit();
+
+			v4.submit();
+			v3.submit();
+			v7.submit();
+			v8.submit();
+		}
+		GL11.glEnd();
+
+	}
+
+	private void drawUnitTableTop() {
+		Vertex v1 = new Vertex(-2f, 0.2f, 4.0f);
+		Vertex v2 = new Vertex(2f, 0.2f, 4.0f);
+		Vertex v3 = new Vertex(-2f, -0.2f, 4.0f);
+		Vertex v4 = new Vertex(2f, -0.2f, 4.0f);
+		Vertex v5 = new Vertex(-2f, 0.2f, -4.0f);
+		Vertex v6 = new Vertex(2f, 0.2f, -4.0f);
+		Vertex v7 = new Vertex(-2f, -0.2f, -4.0f);
+		Vertex v8 = new Vertex(2f, -0.2f, -4.0f);
+
+		// draw the near face:
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			new Normal(v3.toVector(), v4.toVector(), v2.toVector(), v1.toVector()).submit();
+			v3.submit();
+			v4.submit();
+			v2.submit();
+			v1.submit();
+		}
+		GL11.glEnd();
+
+		// draw the far face:
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			new Normal(v8.toVector(), v7.toVector(), v5.toVector(), v6.toVector()).submit();
+
+			v8.submit();
+			v7.submit();
+			v5.submit();
+			v6.submit();
+		}
+		GL11.glEnd();
+
+		// draw the left face:
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			new Normal(v1.toVector(), v5.toVector(), v7.toVector(), v3.toVector()).submit();
+
+			v1.submit();
+			v5.submit();
+			v7.submit();
+			v3.submit();
+		}
+		GL11.glEnd();
+
+		// draw the right face:
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			new Normal(v2.toVector(), v4.toVector(), v8.toVector(), v6.toVector()).submit();
+
+			v2.submit();
+			v4.submit();
+			v8.submit();
+			v6.submit();
+		}
+		GL11.glEnd();
+
+		// draw the top face:
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			new Normal(v1.toVector(), v2.toVector(), v6.toVector(), v5.toVector()).submit();
+
+			v1.submit();
+			v2.submit();
+			v6.submit();
+			v5.submit();
+		}
+		GL11.glEnd();
+
+		// draw the bottom face:
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			new Normal(v4.toVector(), v3.toVector(), v7.toVector(), v8.toVector()).submit();
+
+			v4.submit();
+			v3.submit();
+			v7.submit();
+			v8.submit();
+		}
+		GL11.glEnd();
+
 	}
 
 }
