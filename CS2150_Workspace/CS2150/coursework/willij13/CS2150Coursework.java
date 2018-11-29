@@ -76,6 +76,10 @@ public class CS2150Coursework extends GraphicsLab {
 	 * display list id of the table leg
 	 */
 	private final int tableLegList = 9;
+	/**
+	 * display list id of the ceiling light
+	 */
+	private final int lightList = 10;
 
 	private float ringAngle = 0.0f;
 
@@ -105,9 +109,9 @@ public class CS2150Coursework extends GraphicsLab {
 	private Texture targetTextures;
 
 	private Texture tableTextures;
-	
+
 	private Texture ceilingTextures;
-	
+
 	private Texture ceilingLightTextures;
 
 	// TODO: Feel free to change the window title and default animation scale
@@ -123,19 +127,18 @@ public class CS2150Coursework extends GraphicsLab {
 		targetTextures = loadTexture("coursework/willij13/textures/target.png");
 		tableTextures = loadTexture("coursework/willij13/textures/table_top.jpg");
 		ceilingTextures = loadTexture("coursework/willij13/textures/ceiling.jpg");
-		ceilingLightTextures = loadTexture("coursework/willij13/textures/light_panel.jpg");
+		ceilingLightTextures = loadTexture("coursework/willij13/textures/light_panel.png");
 
 		// global ambient light level
-		float globalAmbient[] = { 0.8f, 0.8f, 0.8f, 1.0f };
-		// set the global ambient lighting
+		float globalAmbient[] = { 0.8f, 0.8f, 0.8f, 1.0f }; // set the global ambient lighting
 		GL11.glLightModel(GL11.GL_LIGHT_MODEL_AMBIENT, FloatBuffer.wrap(globalAmbient));
 
-		// the first light for the scene is soft blue...
-		float diffuse0[] = { 0.2f, 0.2f, 0.4f, 1.0f };
+		// the first light for the scene...
+		float diffuse0[] = { 0.8f, 0.8f, 0.8f, 1.0f };
 		// ...with a very dim ambient contribution...
 		float ambient0[] = { 0.05f, 0.05f, 0.05f, 1.0f };
 		// ...and is positioned above the viewpoint
-		float position0[] = { 0.0f, 10.0f, 5.0f, 1.0f };
+		float position0[] = { 0.0f, 3f + heightView, -20.0f, 1.0f };
 
 		// supply OpenGL with the properties for the first light
 		GL11.glLight(GL11.GL_LIGHT0, GL11.GL_AMBIENT, FloatBuffer.wrap(ambient0));
@@ -147,8 +150,7 @@ public class CS2150Coursework extends GraphicsLab {
 
 		// enable lighting calculations
 		GL11.glEnable(GL11.GL_LIGHTING);
-		// ensure that all normals are re-normalised after transformations
-		// automatically
+		// ensure that all normals are re-normalised after transformations automatically
 		GL11.glEnable(GL11.GL_NORMALIZE);
 
 		// prepare the display lists for later use
@@ -196,6 +198,11 @@ public class CS2150Coursework extends GraphicsLab {
 		GL11.glNewList(tableLegList, GL11.GL_COMPILE);
 		{
 			drawUnitTableLeg();
+		}
+		GL11.glEndList();
+		GL11.glNewList(lightList, GL11.GL_COMPILE);
+		{
+			drawUnitLight();
 		}
 		GL11.glEndList();
 	}
@@ -575,6 +582,106 @@ public class CS2150Coursework extends GraphicsLab {
 		}
 		GL11.glPopMatrix();
 
+		// Render ceiling light #1
+		GL11.glPushMatrix();
+		{
+			// disable lighting calculations so that they don't affect
+			// the appearance of the texture
+			GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
+			GL11.glDisable(GL11.GL_LIGHTING);
+			// change the geometry colour to white so that the texture
+			// is bright and details can be seen clearly
+			Colour.WHITE.submit();
+			// enable texturing and bind an appropriate texture
+			GL11.glEnable(GL11.GL_TEXTURE_2D);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, ceilingLightTextures.getTextureID());
+
+			GL11.glTranslatef(widthView, 8.9f + heightView, -5 + moving);
+			GL11.glScalef(4, 1, 4);
+
+			GL11.glCallList(lightList);
+
+			// disable textures and reset any local lighting changes
+			GL11.glDisable(GL11.GL_TEXTURE_2D);
+			GL11.glPopAttrib();
+		}
+		GL11.glPopMatrix();
+
+		// Render ceiling light #2
+		GL11.glPushMatrix();
+		{
+			// disable lighting calculations so that they don't affect
+			// the appearance of the texture
+			GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
+			GL11.glDisable(GL11.GL_LIGHTING);
+			// change the geometry colour to white so that the texture
+			// is bright and details can be seen clearly
+			Colour.WHITE.submit();
+			// enable texturing and bind an appropriate texture
+			GL11.glEnable(GL11.GL_TEXTURE_2D);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, ceilingLightTextures.getTextureID());
+
+			GL11.glTranslatef(widthView, 8.9f + heightView, -20 + moving);
+			GL11.glScalef(4, 1, 4);
+
+			GL11.glCallList(lightList);
+
+			// disable textures and reset any local lighting changes
+			GL11.glDisable(GL11.GL_TEXTURE_2D);
+			GL11.glPopAttrib();
+		}
+		GL11.glPopMatrix();
+
+		// Render ceiling light #3
+		GL11.glPushMatrix();
+		{
+			// disable lighting calculations so that they don't affect
+			// the appearance of the texture
+			GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
+			GL11.glDisable(GL11.GL_LIGHTING);
+			// change the geometry colour to white so that the texture
+			// is bright and details can be seen clearly
+			Colour.WHITE.submit();
+			// enable texturing and bind an appropriate texture
+			GL11.glEnable(GL11.GL_TEXTURE_2D);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, ceilingLightTextures.getTextureID());
+
+			GL11.glTranslatef(widthView, 8.9f + heightView, -35 + moving);
+			GL11.glScalef(4, 1, 4);
+
+			GL11.glCallList(lightList);
+
+			// disable textures and reset any local lighting changes
+			GL11.glDisable(GL11.GL_TEXTURE_2D);
+			GL11.glPopAttrib();
+		}
+		GL11.glPopMatrix();
+
+		// Render ceiling light #4
+		GL11.glPushMatrix();
+		{
+			// disable lighting calculations so that they don't affect
+			// the appearance of the texture
+			GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
+			GL11.glDisable(GL11.GL_LIGHTING);
+			// change the geometry colour to white so that the texture
+			// is bright and details can be seen clearly
+			Colour.WHITE.submit();
+			// enable texturing and bind an appropriate texture
+			GL11.glEnable(GL11.GL_TEXTURE_2D);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, ceilingLightTextures.getTextureID());
+
+			GL11.glTranslatef(widthView, 8.9f + heightView, -50 + moving);
+			GL11.glScalef(4, 1, 4);
+
+			GL11.glCallList(lightList);
+
+			// disable textures and reset any local lighting changes
+			GL11.glDisable(GL11.GL_TEXTURE_2D);
+			GL11.glPopAttrib();
+		}
+		GL11.glPopMatrix();
+
 		// Renders the dart board
 		GL11.glPushMatrix();
 		{
@@ -757,7 +864,7 @@ public class CS2150Coursework extends GraphicsLab {
 			// how shiny is the dart grip (specular exponent)
 			float gripFrontShininess = 40.0f;
 			// specular reflection of the dart grip
-			float gripFrontSpecular[] = { 0.1f, 0.0f, 0.0f, 1.0f };
+			float gripFrontSpecular[] = { 0.2f, 0.2f, 0.2f, 1.0f };
 			// diffuse reflection of the dart grip
 			float gripFrontDiffuse[] = { 0.2f, 0.2f, 0.2f, 1.0f };
 
@@ -778,7 +885,7 @@ public class CS2150Coursework extends GraphicsLab {
 				// how shiny is the dart spike (specular exponent)
 				float spikeFrontShininess = 40.0f;
 				// specular reflection of the dart spike
-				float spikeFrontSpecular[] = { 0.1f, 0.0f, 0.0f, 1.0f };
+				float spikeFrontSpecular[] = { 0.8f, 0.8f, 0.8f, 1.0f };
 				// diffuse reflection of the dart spike
 				float spikeFrontDiffuse[] = { 0.6f, 0.6f, 0.6f, 1.0f };
 
@@ -801,7 +908,7 @@ public class CS2150Coursework extends GraphicsLab {
 				// how shiny are the fins (specular exponent)
 				float finFrontShininess = 2.0f;
 				// specular reflection of the fins
-				float finFrontSpecular[] = { 0.1f, 0.0f, 0.0f, 1.0f };
+				float finFrontSpecular[] = { 0.4f, 0.0f, 0.0f, 1.0f };
 				// diffuse reflection of the fins
 				float finFrontDiffuse[] = { 0.6f, 0.2f, 0.2f, 1.0f };
 
@@ -1351,16 +1458,91 @@ public class CS2150Coursework extends GraphicsLab {
 		}
 		GL11.glEnd();
 	}
-	
-	public void drawUnitLight(){
-		Vertex v1 = new Vertex(0f, 0f, 0f);
-		Vertex v2 = new Vertex(0f, 0f, 0f);
-		Vertex v3 = new Vertex(0f, 0f, 0f);
-		Vertex v4 = new Vertex(0f, 0f, 0f);
-		Vertex v5 = new Vertex(0f, 0f, 0f);
-		Vertex v6 = new Vertex(0f, 0f, 0f);
-		Vertex v7 = new Vertex(0f, 0f, 0f);
-		Vertex v8 = new Vertex(0f, 0f, 0f);
+
+	private void drawUnitLight() {
+		Vertex v1 = new Vertex(-0.5f, 0.1f, 0.5f);
+		Vertex v2 = new Vertex(0.5f, 0.1f, 0.5f);
+		Vertex v3 = new Vertex(-0.5f, -0.1f, 0.5f);
+		Vertex v4 = new Vertex(0.5f, -0.1f, 0.5f);
+		Vertex v5 = new Vertex(-0.5f, 0.1f, -0.5f);
+		Vertex v6 = new Vertex(0.5f, 0.1f, -0.5f);
+		Vertex v7 = new Vertex(-0.5f, -0.1f, -0.5f);
+		Vertex v8 = new Vertex(0.5f, -0.1f, -0.5f);
+
+		// draw the near face:
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			new Normal(v3.toVector(), v4.toVector(), v2.toVector(), v1.toVector()).submit();
+			v3.submit();
+			v4.submit();
+			v2.submit();
+			v1.submit();
+		}
+		GL11.glEnd();
+
+		// draw the far face:
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			new Normal(v8.toVector(), v7.toVector(), v5.toVector(), v6.toVector()).submit();
+
+			v8.submit();
+			v7.submit();
+			v5.submit();
+			v6.submit();
+		}
+		GL11.glEnd();
+
+		// draw the left face:
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			new Normal(v1.toVector(), v5.toVector(), v7.toVector(), v3.toVector()).submit();
+
+			v1.submit();
+			v5.submit();
+			v7.submit();
+			v3.submit();
+		}
+		GL11.glEnd();
+
+		// draw the right face:
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			new Normal(v2.toVector(), v4.toVector(), v8.toVector(), v6.toVector()).submit();
+
+			v2.submit();
+			v4.submit();
+			v8.submit();
+			v6.submit();
+		}
+		GL11.glEnd();
+
+		// draw the top face:
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			new Normal(v1.toVector(), v2.toVector(), v6.toVector(), v5.toVector()).submit();
+
+			v1.submit();
+			v2.submit();
+			v6.submit();
+			v5.submit();
+		}
+		GL11.glEnd();
+
+		// draw the bottom face:
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			new Normal(v4.toVector(), v3.toVector(), v7.toVector(), v8.toVector()).submit();
+
+			GL11.glTexCoord2f(0.0f, 0.0f);
+			v4.submit();
+			GL11.glTexCoord2f(1.0f, 0.0f);
+			v3.submit();
+			GL11.glTexCoord2f(1.0f, 1.0f);
+			v7.submit();
+			GL11.glTexCoord2f(0.0f, 1.0f);
+			v8.submit();
+		}
+		GL11.glEnd();
 	}
 
 }
