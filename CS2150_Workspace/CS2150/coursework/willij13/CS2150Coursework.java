@@ -1,5 +1,9 @@
 /* CS2150Coursework.java
- * Aston University. Jacob Williams
+ * Aston University
+ * Name: Jacob Williams
+ * Course: Computer Science BSc
+ * Year: 2
+ * Statement: This is a confirmation that everything in this piece of coursework is my own, apart from the images used for textures.
  *
  * Scene Graph:
  *  Scene origin
@@ -109,84 +113,98 @@ import GraphicsLab.*;
 public class CS2150Coursework extends GraphicsLab {
 	/**
 	 * display list id of the grip
+	 * 
 	 * @see #initScene()
 	 * @see #renderScene()
 	 */
 	private final int gripList = 1;
 	/**
 	 * display list id of a fin
+	 * 
 	 * @see #initScene()
 	 * @see #renderScene()
 	 */
 	private final int finList = 2;
 	/**
 	 * display list id of the dart spike
+	 * 
 	 * @see #initScene()
 	 * @see #renderScene()
 	 */
 	private final int spikeList = 3;
 	/**
 	 * display list id of the dart back end
+	 * 
 	 * @see #initScene()
 	 * @see #renderScene()
 	 */
 	private final int dartBackEndList = 4;
 	/**
 	 * display list id of plane
+	 * 
 	 * @see #initScene()
 	 * @see #renderScene()
 	 */
 	private final int planeList = 5;
 	/**
 	 * display list id of the dart board
+	 * 
 	 * @see #initScene()
 	 * @see #renderScene()
 	 */
 	private final int boardList = 6;
 	/**
 	 * display list id of the ring
+	 * 
 	 * @see #initScene()
 	 * @see #renderScene()
 	 */
 	private final int ringList = 7;
 	/**
 	 * display list id of the table top
+	 * 
 	 * @see #initScene()
 	 * @see #renderScene()
 	 */
 	private final int tableTopList = 8;
 	/**
 	 * display list id of the table leg
+	 * 
 	 * @see #initScene()
 	 * @see #renderScene()
 	 */
 	private final int tableLegList = 9;
 	/**
 	 * display list id of the ceiling light
+	 * 
 	 * @see #initScene()
 	 * @see #renderScene()
 	 */
 	private final int lightList = 10;
 	/**
 	 * display list id of the bar
+	 * 
 	 * @see #initScene()
 	 * @see #renderScene()
 	 */
 	private final int barList = 11;
 	/**
 	 * display list id of the shelf
+	 * 
 	 * @see #initScene()
 	 * @see #renderScene()
 	 */
 	private final int shelfList = 12;
 	/**
 	 * value of the angle for the rotating rings
+	 * 
 	 * @see #renderScene()
 	 * @see #updateScene()
 	 */
 	private float ringAngle = 0.0f;
 	/**
 	 * value of the angle for the dart spinning
+	 * 
 	 * @see #checkSceneInput()
 	 * @see #renderScene()
 	 * @see #updateScene()
@@ -194,6 +212,7 @@ public class CS2150Coursework extends GraphicsLab {
 	private float spinRotationAngle = 0.0f;
 	/**
 	 * value of the angle for the dart angling upwards/downwards
+	 * 
 	 * @see #checkSceneInput()
 	 * @see #renderScene()
 	 * @see #resetAnimations()
@@ -201,6 +220,7 @@ public class CS2150Coursework extends GraphicsLab {
 	private float dartAngleY = 0.0f;
 	/**
 	 * value of the dart movement along the y axis
+	 * 
 	 * @see #checkSceneInput()
 	 * @see #dartYLimit()
 	 * @see #renderScene()
@@ -209,6 +229,7 @@ public class CS2150Coursework extends GraphicsLab {
 	private float dartMovementY = 0.0f;
 	/**
 	 * value of the angle for the dart angling left/right
+	 * 
 	 * @see #checkSceneInput()
 	 * @see #renderScene()
 	 * @see #resetAnimations()
@@ -216,6 +237,7 @@ public class CS2150Coursework extends GraphicsLab {
 	private float dartAngleX = 0.0f;
 	/**
 	 * value of the dart movement along the x axis
+	 * 
 	 * @see #checkSceneInput()
 	 * @see #dartXLimit()
 	 * @see #renderScene()
@@ -224,6 +246,7 @@ public class CS2150Coursework extends GraphicsLab {
 	private float dartMovementX = 0.0f;
 	/**
 	 * value of the scene movement along the z axis
+	 * 
 	 * @see #checkSceneInput()
 	 * @see #isDartOnBoard()
 	 * @see #renderScene()
@@ -232,6 +255,7 @@ public class CS2150Coursework extends GraphicsLab {
 	private float moving = 0.0f;
 	/**
 	 * value of the scene movement along the y axis
+	 * 
 	 * @see #checkSceneInput()
 	 * @see #initScene()
 	 * @see #renderScene()
@@ -240,6 +264,7 @@ public class CS2150Coursework extends GraphicsLab {
 	private float heightView = 0.0f;
 	/**
 	 * value of the scene movement along the x axis
+	 * 
 	 * @see #checkSceneInput()
 	 * @see #renderScene()
 	 * @see #resetAnimations()
@@ -247,6 +272,7 @@ public class CS2150Coursework extends GraphicsLab {
 	private float widthView = 0.0f;
 	/**
 	 * holds true if the dart is in motion / has been thrown, false otherwise
+	 * 
 	 * @see #checkDartHit()
 	 * @see #checkSceneInput()
 	 * @see #resetAnimations()
@@ -279,24 +305,64 @@ public class CS2150Coursework extends GraphicsLab {
 		ceilingLightTextures = loadTexture("coursework/willij13/textures/light_panel.png");
 		barSideTextures = loadTexture("coursework/willij13/textures/bar_side.jpg");
 		bottlesTextures = loadTexture("coursework/willij13/textures/bottles.jpg");
-		
+
 		// global ambient light level
-		float globalAmbient[] = { 0.8f, 0.8f, 0.8f, 1.0f }; // set the global
-															// ambient lighting
+		float globalAmbient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+		// set the global ambient lighting
 		GL11.glLightModel(GL11.GL_LIGHT_MODEL_AMBIENT, FloatBuffer.wrap(globalAmbient));
 
 		// the first light for the scene...
-		float diffuse0[] = { 0.8f, 0.8f, 0.8f, 1.0f };
-		// ...with a very dim ambient contribution...
-		float ambient0[] = { 0.05f, 0.05f, 0.05f, 1.0f };
+		float diffuse0[] = { 0.8f, 0.8f, 0.8f, 1.0f }; // Normal
+		// ...with a dim ambient contribution...
+		float ambient0[] = { 0.2f, 0.2f, 0.2f, 1.0f };
 		// ...and is positioned above the viewpoint
-		float position0[] = { 0.0f, 3f + heightView, -20.0f, 1.0f };
+		float position0[] = { 0.0f, 3f, -20.0f, 1.0f };
 
 		// supply OpenGL with the properties for the first light
 		GL11.glLight(GL11.GL_LIGHT0, GL11.GL_AMBIENT, FloatBuffer.wrap(ambient0));
 		GL11.glLight(GL11.GL_LIGHT0, GL11.GL_DIFFUSE, FloatBuffer.wrap(diffuse0));
 		GL11.glLight(GL11.GL_LIGHT0, GL11.GL_SPECULAR, FloatBuffer.wrap(diffuse0));
 		GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION, FloatBuffer.wrap(position0));
+
+		// the second light for the scene...
+		float diffuse1[] = { 1.0f, 0.0f, 1.0f, 1.0f }; // Purple
+		// ...with a dim ambient contribution...
+		float ambient1[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+		// ...and is positioned above the viewpoint
+		float position1[] = { 0.0f, 3f, -20.0f, 1.0f };
+
+		// supply OpenGL with the properties for the first light
+		GL11.glLight(GL11.GL_LIGHT1, GL11.GL_AMBIENT, FloatBuffer.wrap(ambient1));
+		GL11.glLight(GL11.GL_LIGHT1, GL11.GL_DIFFUSE, FloatBuffer.wrap(diffuse1));
+		GL11.glLight(GL11.GL_LIGHT1, GL11.GL_SPECULAR, FloatBuffer.wrap(diffuse1));
+		GL11.glLight(GL11.GL_LIGHT1, GL11.GL_POSITION, FloatBuffer.wrap(position1));
+
+		// the third light for the scene...
+		float diffuse2[] = { 0.2f, 1.0f, 0.2f, 1.0f }; // Green
+		// ...with a dim ambient contribution...
+		float ambient2[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+		// ...and is positioned above the viewpoint
+		float position2[] = { 0.0f, 3f, -20.0f, 1.0f };
+
+		// supply OpenGL with the properties for the first light
+		GL11.glLight(GL11.GL_LIGHT2, GL11.GL_AMBIENT, FloatBuffer.wrap(ambient2));
+		GL11.glLight(GL11.GL_LIGHT2, GL11.GL_DIFFUSE, FloatBuffer.wrap(diffuse2));
+		GL11.glLight(GL11.GL_LIGHT2, GL11.GL_SPECULAR, FloatBuffer.wrap(diffuse2));
+		GL11.glLight(GL11.GL_LIGHT2, GL11.GL_POSITION, FloatBuffer.wrap(position2));
+
+		// the fourth light for the scene...
+		float diffuse3[] = { 1.0f, 0.2f, 0.2f, 1.0f }; // Red
+		// ...with a dim ambient contribution...
+		float ambient3[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+		// ...and is positioned above the viewpoint
+		float position3[] = { 0.0f, 3f, -20.0f, 1.0f };
+
+		// supply OpenGL with the properties for the first light
+		GL11.glLight(GL11.GL_LIGHT3, GL11.GL_AMBIENT, FloatBuffer.wrap(ambient3));
+		GL11.glLight(GL11.GL_LIGHT3, GL11.GL_DIFFUSE, FloatBuffer.wrap(diffuse3));
+		GL11.glLight(GL11.GL_LIGHT3, GL11.GL_SPECULAR, FloatBuffer.wrap(diffuse3));
+		GL11.glLight(GL11.GL_LIGHT3, GL11.GL_POSITION, FloatBuffer.wrap(position3));
+
 		// enable the first light
 		GL11.glEnable(GL11.GL_LIGHT0);
 
@@ -452,16 +518,32 @@ public class CS2150Coursework extends GraphicsLab {
 		spinRotationAngle += +40.0f * getAnimationScale();
 
 		ringAngle += 10.0f * getAnimationScale();
+
+		if (moving < 13) {
+			GL11.glDisable(GL11.GL_LIGHT1);
+			GL11.glDisable(GL11.GL_LIGHT2);
+			GL11.glDisable(GL11.GL_LIGHT3);
+			GL11.glDisable(GL11.GL_LIGHT4);
+			GL11.glEnable(GL11.GL_LIGHT0);
+		} else if (moving < 26) {
+			GL11.glDisable(GL11.GL_LIGHT0);
+			GL11.glEnable(GL11.GL_LIGHT1);
+		} else if (moving < 39) {
+			GL11.glDisable(GL11.GL_LIGHT1);
+			GL11.glEnable(GL11.GL_LIGHT2);
+		} else if (moving < 52) {
+			GL11.glDisable(GL11.GL_LIGHT2);
+			GL11.glEnable(GL11.GL_LIGHT3);
+		} else if (moving < 65) {
+			GL11.glDisable(GL11.GL_LIGHT3);
+			GL11.glEnable(GL11.GL_LIGHT0);
+		}
 	}
 
 	protected void renderScene() {
 		// draw ground plane #1
 		GL11.glPushMatrix();
 		{
-			// disable lighting calculations so that they don't affect
-			// the appearance of the texture
-			GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
-			GL11.glDisable(GL11.GL_LIGHTING);
 			// change the geometry colour to white so that the texture
 			// is bright and details can be seen clearly
 			Colour.WHITE.submit();
@@ -472,6 +554,20 @@ public class CS2150Coursework extends GraphicsLab {
 			// position, scale and draw the ground plane using its display list
 			GL11.glTranslatef(widthView, -1.0f + heightView, -7.5f + moving);
 			GL11.glScalef(25.0f, 1.0f, 40.0f);
+
+			// how shiny is the floor (specular exponent)
+			float gripFrontShininess = 100.0f;
+			// specular reflection of the floor
+			float gripFrontSpecular[] = { 0.1f, 0.1f, 0.8f, 1.0f };
+			// diffuse reflection of the floor
+			float gripFrontDiffuse[] = { 1f, 1f, 1f, 1.0f };
+
+			// set the material properties for the dart grip using OpenGL
+			GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, gripFrontShininess);
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(gripFrontSpecular));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(gripFrontDiffuse));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(gripFrontDiffuse));
+
 			GL11.glCallList(planeList);
 
 			// disable textures and reset any local lighting changes
@@ -483,10 +579,6 @@ public class CS2150Coursework extends GraphicsLab {
 		// add ground plane #2
 		GL11.glPushMatrix();
 		{
-			// disable lighting calculations so that they don't affect
-			// the appearance of the texture
-			GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
-			GL11.glDisable(GL11.GL_LIGHTING);
 			// change the geometry colour to white so that the texture
 			// is bright and details can be seen clearly
 			Colour.WHITE.submit();
@@ -497,6 +589,20 @@ public class CS2150Coursework extends GraphicsLab {
 			// position, scale and draw the ground plane using its display list
 			GL11.glTranslatef(widthView, -1.0f + heightView, -47.5f + moving);
 			GL11.glScalef(25.0f, 1.0f, 40.0f);
+
+			// how shiny is the floor (specular exponent)
+			float gripFrontShininess = 100.0f;
+			// specular reflection of the floor
+			float gripFrontSpecular[] = { 0.1f, 0.1f, 0.8f, 1.0f };
+			// diffuse reflection of the floor
+			float gripFrontDiffuse[] = { 1f, 1f, 1f, 1.0f };
+
+			// set the material properties for the dart grip using OpenGL
+			GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, gripFrontShininess);
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(gripFrontSpecular));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(gripFrontDiffuse));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(gripFrontDiffuse));
+
 			GL11.glCallList(planeList);
 
 			// disable textures and reset any local lighting changes
@@ -508,10 +614,6 @@ public class CS2150Coursework extends GraphicsLab {
 		// draw ceiling plane #1
 		GL11.glPushMatrix();
 		{
-			// disable lighting calculations so that they don't affect
-			// the appearance of the texture
-			GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
-			GL11.glDisable(GL11.GL_LIGHTING);
 			// change the geometry colour to white so that the texture
 			// is bright and details can be seen clearly
 			Colour.WHITE.submit();
@@ -523,6 +625,20 @@ public class CS2150Coursework extends GraphicsLab {
 			GL11.glTranslatef(widthView, 9.0f + heightView, -7.5f + moving);
 			GL11.glRotatef(180, 0, 0, 1);
 			GL11.glScalef(25.0f, 1.0f, 40.0f);
+
+			// how shiny is the floor (specular exponent)
+			float gripFrontShininess = 100.0f;
+			// specular reflection of the floor
+			float gripFrontSpecular[] = { 0.1f, 0.1f, 0.8f, 1.0f };
+			// diffuse reflection of the floor
+			float gripFrontDiffuse[] = { 1f, 1f, 1f, 1.0f };
+
+			// set the material properties for the dart grip using OpenGL
+			GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, gripFrontShininess);
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(gripFrontSpecular));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(gripFrontDiffuse));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(gripFrontDiffuse));
+
 			GL11.glCallList(planeList);
 
 			// disable textures and reset any local lighting changes
@@ -534,10 +650,6 @@ public class CS2150Coursework extends GraphicsLab {
 		// add ceiling plane #2
 		GL11.glPushMatrix();
 		{
-			// disable lighting calculations so that they don't affect
-			// the appearance of the texture
-			GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
-			GL11.glDisable(GL11.GL_LIGHTING);
 			// change the geometry colour to white so that the texture
 			// is bright and details can be seen clearly
 			Colour.WHITE.submit();
@@ -549,6 +661,20 @@ public class CS2150Coursework extends GraphicsLab {
 			GL11.glTranslatef(widthView, 9.0f + heightView, -47.5f + moving);
 			GL11.glRotatef(180, 0, 0, 1);
 			GL11.glScalef(25.0f, 1.0f, 40.0f);
+
+			// how shiny is the floor (specular exponent)
+			float gripFrontShininess = 100.0f;
+			// specular reflection of the floor
+			float gripFrontSpecular[] = { 0.1f, 0.1f, 0.8f, 1.0f };
+			// diffuse reflection of the floor
+			float gripFrontDiffuse[] = { 1f, 1f, 1f, 1.0f };
+
+			// set the material properties for the dart grip using OpenGL
+			GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, gripFrontShininess);
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(gripFrontSpecular));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(gripFrontDiffuse));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(gripFrontDiffuse));
+
 			GL11.glCallList(planeList);
 
 			// disable textures and reset any local lighting changes
@@ -560,10 +686,6 @@ public class CS2150Coursework extends GraphicsLab {
 		// draw the back wall plane
 		GL11.glPushMatrix();
 		{
-			// disable lighting calculations so that they don't affect
-			// the appearance of the texture
-			GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
-			GL11.glDisable(GL11.GL_LIGHTING);
 			// change the geometry colour to white so that the texture
 			// is bright and details can be seen clearly
 			Colour.WHITE.submit();
@@ -575,6 +697,20 @@ public class CS2150Coursework extends GraphicsLab {
 			GL11.glTranslatef(widthView, 4.0f + heightView, -67f + moving);
 			GL11.glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
 			GL11.glScalef(25.0f, 1.0f, 10.0f);
+
+			// how shiny is the floor (specular exponent)
+			float gripFrontShininess = 100.0f;
+			// specular reflection of the floor
+			float gripFrontSpecular[] = { 0.1f, 0.1f, 0.8f, 1.0f };
+			// diffuse reflection of the floor
+			float gripFrontDiffuse[] = { 1f, 1f, 1f, 1.0f };
+
+			// set the material properties for the dart grip using OpenGL
+			GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, gripFrontShininess);
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(gripFrontSpecular));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(gripFrontDiffuse));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(gripFrontDiffuse));
+
 			GL11.glCallList(planeList);
 
 			// disable textures and reset any local lighting changes
@@ -586,10 +722,6 @@ public class CS2150Coursework extends GraphicsLab {
 		// draw the left wall plane #1
 		GL11.glPushMatrix();
 		{
-			// disable lighting calculations so that they don't affect
-			// the appearance of the texture
-			GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
-			GL11.glDisable(GL11.GL_LIGHTING);
 			// change the geometry colour to white so that the texture
 			// is bright and details can be seen clearly
 			Colour.WHITE.submit();
@@ -602,6 +734,20 @@ public class CS2150Coursework extends GraphicsLab {
 			GL11.glRotatef(90.0f, 1.0f, 0, 0);
 			GL11.glRotatef(270.0f, 0.0f, 0.0f, 1.0f);
 			GL11.glScalef(25.0f, 1.0f, 10.0f);
+
+			// how shiny is the floor (specular exponent)
+			float gripFrontShininess = 100.0f;
+			// specular reflection of the floor
+			float gripFrontSpecular[] = { 0.1f, 0.1f, 0.8f, 1.0f };
+			// diffuse reflection of the floor
+			float gripFrontDiffuse[] = { 1f, 1f, 1f, 1.0f };
+
+			// set the material properties for the dart grip using OpenGL
+			GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, gripFrontShininess);
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(gripFrontSpecular));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(gripFrontDiffuse));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(gripFrontDiffuse));
+
 			GL11.glCallList(planeList);
 
 			// disable textures and reset any local lighting changes
@@ -613,10 +759,6 @@ public class CS2150Coursework extends GraphicsLab {
 		// draw the left wall plane #2
 		GL11.glPushMatrix();
 		{
-			// disable lighting calculations so that they don't affect
-			// the appearance of the texture
-			GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
-			GL11.glDisable(GL11.GL_LIGHTING);
 			// change the geometry colour to white so that the texture
 			// is bright and details can be seen clearly
 			Colour.WHITE.submit();
@@ -629,6 +771,20 @@ public class CS2150Coursework extends GraphicsLab {
 			GL11.glRotatef(90.0f, 1.0f, 0, 0);
 			GL11.glRotatef(270.0f, 0.0f, 0.0f, 1.0f);
 			GL11.glScalef(25.0f, 1.0f, 10.0f);
+
+			// how shiny is the floor (specular exponent)
+			float gripFrontShininess = 100.0f;
+			// specular reflection of the floor
+			float gripFrontSpecular[] = { 0.1f, 0.1f, 0.8f, 1.0f };
+			// diffuse reflection of the floor
+			float gripFrontDiffuse[] = { 1f, 1f, 1f, 1.0f };
+
+			// set the material properties for the dart grip using OpenGL
+			GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, gripFrontShininess);
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(gripFrontSpecular));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(gripFrontDiffuse));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(gripFrontDiffuse));
+
 			GL11.glCallList(planeList);
 
 			// disable textures and reset any local lighting changes
@@ -640,10 +796,6 @@ public class CS2150Coursework extends GraphicsLab {
 		// draw the left wall plane #3
 		GL11.glPushMatrix();
 		{
-			// disable lighting calculations so that they don't affect
-			// the appearance of the texture
-			GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
-			GL11.glDisable(GL11.GL_LIGHTING);
 			// change the geometry colour to white so that the texture
 			// is bright and details can be seen clearly
 			Colour.WHITE.submit();
@@ -656,6 +808,20 @@ public class CS2150Coursework extends GraphicsLab {
 			GL11.glRotatef(90.0f, 1.0f, 0, 0);
 			GL11.glRotatef(270.0f, 0.0f, 0.0f, 1.0f);
 			GL11.glScalef(25.0f, 1.0f, 10.0f);
+
+			// how shiny is the floor (specular exponent)
+			float gripFrontShininess = 100.0f;
+			// specular reflection of the floor
+			float gripFrontSpecular[] = { 0.1f, 0.1f, 0.8f, 1.0f };
+			// diffuse reflection of the floor
+			float gripFrontDiffuse[] = { 1f, 1f, 1f, 1.0f };
+
+			// set the material properties for the dart grip using OpenGL
+			GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, gripFrontShininess);
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(gripFrontSpecular));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(gripFrontDiffuse));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(gripFrontDiffuse));
+
 			GL11.glCallList(planeList);
 
 			// disable textures and reset any local lighting changes
@@ -667,10 +833,6 @@ public class CS2150Coursework extends GraphicsLab {
 		// draw the right wall plane #1
 		GL11.glPushMatrix();
 		{
-			// disable lighting calculations so that they don't affect
-			// the appearance of the texture
-			GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
-			GL11.glDisable(GL11.GL_LIGHTING);
 			// change the geometry colour to white so that the texture
 			// is bright and details can be seen clearly
 			Colour.WHITE.submit();
@@ -683,6 +845,20 @@ public class CS2150Coursework extends GraphicsLab {
 			GL11.glRotatef(90.0f, 1.0f, 0, 0);
 			GL11.glRotatef(90.0f, 0.0f, 0.0f, 1.0f);
 			GL11.glScalef(25.0f, 1.0f, 10.0f);
+
+			// how shiny is the floor (specular exponent)
+			float gripFrontShininess = 100.0f;
+			// specular reflection of the floor
+			float gripFrontSpecular[] = { 0.1f, 0.1f, 0.8f, 1.0f };
+			// diffuse reflection of the floor
+			float gripFrontDiffuse[] = { 1f, 1f, 1f, 1.0f };
+
+			// set the material properties for the dart grip using OpenGL
+			GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, gripFrontShininess);
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(gripFrontSpecular));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(gripFrontDiffuse));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(gripFrontDiffuse));
+
 			GL11.glCallList(planeList);
 
 			// disable textures and reset any local lighting changes
@@ -694,10 +870,6 @@ public class CS2150Coursework extends GraphicsLab {
 		// draw the right wall plane #2
 		GL11.glPushMatrix();
 		{
-			// disable lighting calculations so that they don't affect
-			// the appearance of the texture
-			GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
-			GL11.glDisable(GL11.GL_LIGHTING);
 			// change the geometry colour to white so that the texture
 			// is bright and details can be seen clearly
 			Colour.WHITE.submit();
@@ -710,6 +882,20 @@ public class CS2150Coursework extends GraphicsLab {
 			GL11.glRotatef(90.0f, 1.0f, 0, 0);
 			GL11.glRotatef(90.0f, 0.0f, 0.0f, 1.0f);
 			GL11.glScalef(25.0f, 1.0f, 10.0f);
+
+			// how shiny is the floor (specular exponent)
+			float gripFrontShininess = 100.0f;
+			// specular reflection of the floor
+			float gripFrontSpecular[] = { 0.1f, 0.1f, 0.8f, 1.0f };
+			// diffuse reflection of the floor
+			float gripFrontDiffuse[] = { 1f, 1f, 1f, 1.0f };
+
+			// set the material properties for the dart grip using OpenGL
+			GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, gripFrontShininess);
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(gripFrontSpecular));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(gripFrontDiffuse));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(gripFrontDiffuse));
+
 			GL11.glCallList(planeList);
 
 			// disable textures and reset any local lighting changes
@@ -721,10 +907,6 @@ public class CS2150Coursework extends GraphicsLab {
 		// draw the right wall plane #3
 		GL11.glPushMatrix();
 		{
-			// disable lighting calculations so that they don't affect
-			// the appearance of the texture
-			GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
-			GL11.glDisable(GL11.GL_LIGHTING);
 			// change the geometry colour to white so that the texture
 			// is bright and details can be seen clearly
 			Colour.WHITE.submit();
@@ -737,6 +919,20 @@ public class CS2150Coursework extends GraphicsLab {
 			GL11.glRotatef(90.0f, 1.0f, 0, 0);
 			GL11.glRotatef(90.0f, 0.0f, 0.0f, 1.0f);
 			GL11.glScalef(25.0f, 1.0f, 10.0f);
+
+			// how shiny is the floor (specular exponent)
+			float gripFrontShininess = 100.0f;
+			// specular reflection of the floor
+			float gripFrontSpecular[] = { 0.1f, 0.1f, 0.8f, 1.0f };
+			// diffuse reflection of the floor
+			float gripFrontDiffuse[] = { 1f, 1f, 1f, 1.0f };
+
+			// set the material properties for the dart grip using OpenGL
+			GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, gripFrontShininess);
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(gripFrontSpecular));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(gripFrontDiffuse));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(gripFrontDiffuse));
+
 			GL11.glCallList(planeList);
 
 			// disable textures and reset any local lighting changes
@@ -947,10 +1143,6 @@ public class CS2150Coursework extends GraphicsLab {
 		// Renders the bar
 		GL11.glPushMatrix();
 		{
-			// disable lighting calculations so that they don't affect
-			// the appearance of the texture
-			GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
-			GL11.glDisable(GL11.GL_LIGHTING);
 			// change the geometry colour to white so that the texture
 			// is bright and details can be seen clearly
 			Colour.WHITE.submit();
@@ -960,6 +1152,19 @@ public class CS2150Coursework extends GraphicsLab {
 
 			GL11.glTranslatef(10 + widthView, 0.5f + heightView, -25 + moving);
 			GL11.glRotatef(270, 0, 1, 0);
+
+			// how shiny is the floor (specular exponent)
+			float gripFrontShininess = 100.0f;
+			// specular reflection of the floor
+			float gripFrontSpecular[] = { 0.1f, 0.1f, 0.8f, 1.0f };
+			// diffuse reflection of the floor
+			float gripFrontDiffuse[] = { 1f, 1f, 1f, 1.0f };
+
+			// set the material properties for the dart grip using OpenGL
+			GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, gripFrontShininess);
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(gripFrontSpecular));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(gripFrontDiffuse));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(gripFrontDiffuse));
 
 			GL11.glCallList(barList);
 
@@ -972,10 +1177,6 @@ public class CS2150Coursework extends GraphicsLab {
 		// Renders the shelf
 		GL11.glPushMatrix();
 		{
-			// disable lighting calculations so that they don't affect
-			// the appearance of the texture
-			GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
-			GL11.glDisable(GL11.GL_LIGHTING);
 			// change the geometry colour to white so that the texture
 			// is bright and details can be seen clearly
 			Colour.WHITE.submit();
@@ -985,6 +1186,19 @@ public class CS2150Coursework extends GraphicsLab {
 
 			GL11.glTranslatef(11.5f + widthView, 5 + heightView, -25 + moving);
 			GL11.glRotatef(270, 0, 1, 0);
+
+			// how shiny is the floor (specular exponent)
+			float gripFrontShininess = 100.0f;
+			// specular reflection of the floor
+			float gripFrontSpecular[] = { 0.1f, 0.1f, 0.8f, 1.0f };
+			// diffuse reflection of the floor
+			float gripFrontDiffuse[] = { 1f, 1f, 1f, 1.0f };
+
+			// set the material properties for the dart grip using OpenGL
+			GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, gripFrontShininess);
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(gripFrontSpecular));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(gripFrontDiffuse));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(gripFrontDiffuse));
 
 			GL11.glCallList(shelfList);
 
@@ -1010,10 +1224,6 @@ public class CS2150Coursework extends GraphicsLab {
 			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(tableFrontDiffuse));
 			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(tableFrontDiffuse));
 
-			// disable lighting calculations so that they don't affect
-			// the appearance of the texture
-			GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
-			GL11.glDisable(GL11.GL_LIGHTING);
 			// change the geometry colour to white so that the texture
 			// is bright and details can be seen clearly
 			Colour.WHITE.submit();
@@ -1022,6 +1232,19 @@ public class CS2150Coursework extends GraphicsLab {
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, tableTextures.getTextureID());
 
 			GL11.glTranslatef(-10 + widthView, 1.2f + heightView, -25 + moving);
+
+			// how shiny is the floor (specular exponent)
+			float gripFrontShininess = 100.0f;
+			// specular reflection of the floor
+			float gripFrontSpecular[] = { 0.1f, 0.1f, 0.8f, 1.0f };
+			// diffuse reflection of the floor
+			float gripFrontDiffuse[] = { 1f, 1f, 1f, 1.0f };
+
+			// set the material properties for the dart grip using OpenGL
+			GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, gripFrontShininess);
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(gripFrontSpecular));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(gripFrontDiffuse));
+			GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(gripFrontDiffuse));
 
 			GL11.glCallList(tableTopList);
 
