@@ -1,11 +1,79 @@
 /* CS2150Coursework.java
- * TODO: Aston University. Jacob Williams
+ * Aston University. Jacob Williams
  *
  * Scene Graph:
  *  Scene origin
  *  |
+ *  +-- [S(25, 1, 40) T(widthView, -1 + heigthView, -7.5 + moving)] First ground plane
+ *  |
+ *  +-- [S(25, 1, 40) T(widthView, -1 + heigthView, -47.5 + moving)] Second ground plane
+ *  |
+ *  +-- [S(25, 1, 40) Rz(180) T(widthView, 9 + heigthView, -7.5 + moving)] First ceiling plane
+ *  |
+ *  +-- [S(25, 1, 40) Rz(180) T(widthView, 9 + heigthView, -47.5 + moving)] Second ceiling plane
+ *  |
+ *  +-- [S(25, 1, 10) Rx(90) T(widthView, 4 + heigthView, -67 + moving)] Back plane
+ *  |
+ *  +-- [S(25, 1, 10) Rz(270) Rx(90) T(-12.5 + widthView, 4 + heigthView, -7 + moving)] First left wall plane
+ *  |
+ *  +-- [S(25, 1, 10) Rz(270) Rx(90) T(-12.5 + widthView, 4 + heigthView, -32 + moving)] Second left wall plane
+ *  |
+ *  +-- [S(25, 1, 10) Rz(270) Rx(90) T(-12.5 + widthView, 4 + heigthView, -57 + moving)] Third left wall plane
+ *  |
+ *  +-- [S(25, 1, 10) Rz(90) Rx(90) T(12.5 + widthView, 4 + heigthView, -7 + moving)] First right wall plane
+ *  |
+ *  +-- [S(25, 1, 10) Rz(270) Rx(90) T(-12.5 + widthView, 4 + heigthView, -32 + moving)] Second right wall plane
+ *  |
+ *  +-- [S(25, 1, 10) Rz(270) Rx(90) T(-12.5 + widthView, 4 + heigthView, -57 + moving)] Third right wall plane
+ *  |
+ *  +-- [S(4, 1, 4) T(widthView, 8.9 + heightView, -5 + moving)] First ceiling light
+ *  |
+ *  +-- [S(4, 1, 4) T(widthView, 8.9 + heightView, -20 + moving)] Second ceiling light
+ *  |
+ *  +-- [S(4, 1, 4) T(widthView, 8.9 + heightView, -35 + moving)] Third ceiling light
+ *  |
+ *  +-- [S(4, 1, 4) T(widthView, 8.9 + heightView, -50 + moving)] Fourth ceiling light
+ *  |
+ *  +-- [T(widthView, 3 + heightView, -67 + moving)] Dart board
+ *  |
+ *  +-- [Rz(ringAngle) T(widthView, 2 + heightView, -37 + moving)] First ring
+ *  |   |
+ *  |   +-- [S(0.9, 0.9, 0.9) T(0, 2, 0)] Second ring
+ *  |   |
+ *  |   +-- [S(0.9, 0.9, 0.9) T(0, -2, 0)] Third ring
+ *  |   |
+ *  |   +-- [S(0.9, 0.9, 0.9) T(2, 0, 0)] Fourth ring
+ *  |   |
+ *  |   +-- [S(0.9, 0.9, 0.9) T(-2, 0, 0)] Fifth ring
+ *  |
+ *  +-- [Ry(270) T(10 + widthView, 0.5 + heightView, -25 + moving)] Bar
+ *  |
+ *  +-- [Ry(270) T(11.5 + widthView, 5 + heightView, -25 + moving)] Shelf
+ *  |
+ *  +-- [T(-10 + widthView, 1.2 + heightView, -25 + moving)] Table
+ *  |	|
+ *  |	+-- [T(-1.9, -1.2, 3.9)] First leg
+ *  |	|
+ *  |	+-- [T(1.9, -1.2, 3.9)] Second leg
+ *  |	|
+ *  |	+-- [T(-1.9, -1.2, -3.9)] Third leg
+ *  |	|
+ *  |	+-- [T(1.9, -1.2, -3.9)] Fourth leg
+ *  |
+ *  +-- [Rz(spinRotationAngle) Ry(dartAngleX) Rx(dartAngleY) T(dartMovementX, dartMovementY, 0)] Dart grip
+ *  	|
+ *  	+-- [T(0, 0, -2)] Dart spike
+ *  	|
+ *  	+-- [T(0, 0.1, 2.75)] First fin
+ *  	|
+ *   	+-- [Rz(180) T(0, -0.1, 2.75)] Second fin
+ *   	|
+ *   	+-- [Rz(90) T(-0.1, 0, 2.75)] Third fin
+ *   	|
+ *   	+-- [Rz(270) T(0.1, 0, 2.75)] Fourth fin
+ *   	|
+ *   	+-- [T(0, 0, 3)] Back of dart
  *
- *  TODO: Provide a scene graph for your submission
  */
 package coursework.willij13;
 
@@ -36,7 +104,6 @@ import GraphicsLab.*;
  * flight.
  * <li>Press r to reset the animation.
  * </ul>
- * TODO: Add any additional controls for your sample to the list above
  *
  */
 public class CS2150Coursework extends GraphicsLab {
@@ -129,7 +196,7 @@ public class CS2150Coursework extends GraphicsLab {
 	// TODO: Feel free to change the window title and default animation scale
 	// here
 	public static void main(String args[]) {
-		new CS2150Coursework().run(WINDOWED, "CS2150 Coursework Submission", 0.01f);
+		new CS2150Coursework().run(WINDOWED, "Dartboard Game", 0.01f);
 	}
 
 	protected void initScene() throws Exception {
@@ -333,7 +400,7 @@ public class CS2150Coursework extends GraphicsLab {
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, groundTextures.getTextureID());
 
 			// position, scale and draw the ground plane using its display list
-			GL11.glTranslatef(0.0f + widthView, -1.0f + heightView, -7.5f + moving);
+			GL11.glTranslatef(widthView, -1.0f + heightView, -7.5f + moving);
 			GL11.glScalef(25.0f, 1.0f, 40.0f);
 			GL11.glCallList(planeList);
 
@@ -358,7 +425,7 @@ public class CS2150Coursework extends GraphicsLab {
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, groundTextures.getTextureID());
 
 			// position, scale and draw the ground plane using its display list
-			GL11.glTranslatef(0.0f + widthView, -1.0f + heightView, -47.5f + moving);
+			GL11.glTranslatef(widthView, -1.0f + heightView, -47.5f + moving);
 			GL11.glScalef(25.0f, 1.0f, 40.0f);
 			GL11.glCallList(planeList);
 
@@ -383,7 +450,7 @@ public class CS2150Coursework extends GraphicsLab {
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, ceilingTextures.getTextureID());
 
 			// position, scale and draw the ground plane using its display list
-			GL11.glTranslatef(0.0f + widthView, 9.0f + heightView, -7.5f + moving);
+			GL11.glTranslatef(widthView, 9.0f + heightView, -7.5f + moving);
 			GL11.glRotatef(180, 0, 0, 1);
 			GL11.glScalef(25.0f, 1.0f, 40.0f);
 			GL11.glCallList(planeList);
@@ -409,7 +476,7 @@ public class CS2150Coursework extends GraphicsLab {
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, ceilingTextures.getTextureID());
 
 			// position, scale and draw the ground plane using its display list
-			GL11.glTranslatef(0.0f + widthView, 9.0f + heightView, -47.5f + moving);
+			GL11.glTranslatef(widthView, 9.0f + heightView, -47.5f + moving);
 			GL11.glRotatef(180, 0, 0, 1);
 			GL11.glScalef(25.0f, 1.0f, 40.0f);
 			GL11.glCallList(planeList);
@@ -435,7 +502,7 @@ public class CS2150Coursework extends GraphicsLab {
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, wallTextures.getTextureID());
 
 			// position, scale and draw the back plane using its display list
-			GL11.glTranslatef(0.0f + widthView, 4.0f + heightView, -67f + moving);
+			GL11.glTranslatef(widthView, 4.0f + heightView, -67f + moving);
 			GL11.glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
 			GL11.glScalef(25.0f, 1.0f, 10.0f);
 			GL11.glCallList(planeList);
@@ -722,7 +789,7 @@ public class CS2150Coursework extends GraphicsLab {
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, targetTextures.getTextureID());
 
-			GL11.glTranslatef(0 + widthView, 3 + heightView, -67 + moving);
+			GL11.glTranslatef(widthView, 3 + heightView, -67 + moving);
 
 			// how shiny is the dart grip (specular exponent)
 			float gripFrontShininess = 40.0f;
@@ -748,7 +815,7 @@ public class CS2150Coursework extends GraphicsLab {
 		// Renders ring #1
 		GL11.glPushMatrix();
 		{
-			GL11.glTranslatef(0 + widthView, 2 + heightView, -37 + moving);
+			GL11.glTranslatef(widthView, 2 + heightView, -37 + moving);
 			GL11.glRotatef(ringAngle, 0, 0, 1);
 			// how shiny is the dart grip (specular exponent)
 			float ringFrontShininess = 40.0f;
@@ -931,8 +998,8 @@ public class CS2150Coursework extends GraphicsLab {
 		{
 			// Renders the dart grip
 
-			GL11.glTranslatef(0, dartMovementY, 0);
-			GL11.glTranslatef(dartMovementX, 0, 0);
+			GL11.glTranslatef(dartMovementX, dartMovementY, 0);
+			//GL11.glTranslatef(dartMovementX, 0, 0);
 			GL11.glRotatef(dartAngleY, 1, 0, 0);
 			GL11.glRotatef(dartAngleX, 0, 1, 0);
 			GL11.glRotatef(spinRotationAngle, 0, 0, 1);
