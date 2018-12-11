@@ -1,0 +1,8 @@
+bar_side.jpg		https://www.crystalgraphicsimages.com/photo/old-wood-texture_cg1p5065645c_th.jpg
+bottles.jpg		http://bgfons.com/uploads/rainbow/rainbow_texture659.jpg
+brick_wall.jpg		https://www.poliigon.com/texture/bricks-01#top_slider
+ceiling.jpg		https://www.poliigon.com/texture/plaster-17#top_slider
+light_panel.png		https://t6.rbxcdn.com/997bd795abeceee47363c78200a553df
+table_top.jpg		https://www.poliigon.com/texture/wood-planks-worn-33#top_slider
+target.png		http://png.clipart-library.com/images4/1/archery-vector-board-4.png
+wood_floor.jpg		https://www.poliigon.com/texture/wood-flooring-044#top_slider
