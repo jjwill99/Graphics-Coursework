@@ -109,88 +109,158 @@ import GraphicsLab.*;
 public class CS2150Coursework extends GraphicsLab {
 	/**
 	 * display list id of the grip
+	 * @see #initScene()
+	 * @see #renderScene()
 	 */
 	private final int gripList = 1;
 	/**
 	 * display list id of a fin
+	 * @see #initScene()
+	 * @see #renderScene()
 	 */
 	private final int finList = 2;
 	/**
 	 * display list id of the dart spike
+	 * @see #initScene()
+	 * @see #renderScene()
 	 */
 	private final int spikeList = 3;
 	/**
 	 * display list id of the dart back end
+	 * @see #initScene()
+	 * @see #renderScene()
 	 */
 	private final int dartBackEndList = 4;
 	/**
 	 * display list id of plane
+	 * @see #initScene()
+	 * @see #renderScene()
 	 */
 	private final int planeList = 5;
 	/**
 	 * display list id of the dart board
+	 * @see #initScene()
+	 * @see #renderScene()
 	 */
 	private final int boardList = 6;
 	/**
 	 * display list id of the ring
+	 * @see #initScene()
+	 * @see #renderScene()
 	 */
 	private final int ringList = 7;
 	/**
 	 * display list id of the table top
+	 * @see #initScene()
+	 * @see #renderScene()
 	 */
 	private final int tableTopList = 8;
 	/**
 	 * display list id of the table leg
+	 * @see #initScene()
+	 * @see #renderScene()
 	 */
 	private final int tableLegList = 9;
 	/**
 	 * display list id of the ceiling light
+	 * @see #initScene()
+	 * @see #renderScene()
 	 */
 	private final int lightList = 10;
 	/**
 	 * display list id of the bar
+	 * @see #initScene()
+	 * @see #renderScene()
 	 */
 	private final int barList = 11;
 	/**
 	 * display list id of the shelf
+	 * @see #initScene()
+	 * @see #renderScene()
 	 */
 	private final int shelfList = 12;
-
+	/**
+	 * value of the angle for the rotating rings
+	 * @see #renderScene()
+	 * @see #updateScene()
+	 */
 	private float ringAngle = 0.0f;
-
+	/**
+	 * value of the angle for the dart spinning
+	 * @see #checkSceneInput()
+	 * @see #renderScene()
+	 * @see #updateScene()
+	 */
 	private float spinRotationAngle = 0.0f;
-
+	/**
+	 * value of the angle for the dart angling upwards/downwards
+	 * @see #checkSceneInput()
+	 * @see #renderScene()
+	 * @see #resetAnimations()
+	 */
 	private float dartAngleY = 0.0f;
-
+	/**
+	 * value of the dart movement along the y axis
+	 * @see #checkSceneInput()
+	 * @see #dartYLimit()
+	 * @see #renderScene()
+	 * @see #resetAnimations()
+	 */
 	private float dartMovementY = 0.0f;
-
+	/**
+	 * value of the angle for the dart angling left/right
+	 * @see #checkSceneInput()
+	 * @see #renderScene()
+	 * @see #resetAnimations()
+	 */
 	private float dartAngleX = 0.0f;
-
+	/**
+	 * value of the dart movement along the x axis
+	 * @see #checkSceneInput()
+	 * @see #dartXLimit()
+	 * @see #renderScene()
+	 * @see #resetAnimations()
+	 */
 	private float dartMovementX = 0.0f;
-
+	/**
+	 * value of the scene movement along the z axis
+	 * @see #checkSceneInput()
+	 * @see #isDartOnBoard()
+	 * @see #renderScene()
+	 * @see #resetAnimations()
+	 */
 	private float moving = 0.0f;
-
+	/**
+	 * value of the scene movement along the y axis
+	 * @see #checkSceneInput()
+	 * @see #initScene()
+	 * @see #renderScene()
+	 * @see #resetAnimations()
+	 */
 	private float heightView = 0.0f;
-
+	/**
+	 * value of the scene movement along the x axis
+	 * @see #checkSceneInput()
+	 * @see #renderScene()
+	 * @see #resetAnimations()
+	 */
 	private float widthView = 0.0f;
-
+	/**
+	 * holds true if the dart is in motion / has been thrown, false otherwise
+	 * @see #checkDartHit()
+	 * @see #checkSceneInput()
+	 * @see #resetAnimations()
+	 */
 	private boolean thrown = false;
 
-	/** textures */
+	// textures
 	private Texture groundTextures;
-
 	private Texture wallTextures;
-
 	private Texture targetTextures;
-
 	private Texture tableTextures;
-
 	private Texture ceilingTextures;
-
 	private Texture ceilingLightTextures;
-
 	private Texture barSideTextures;
-	
 	private Texture bottlesTextures;
 
 	// TODO: Feel free to change the window title and default animation scale
@@ -999,7 +1069,6 @@ public class CS2150Coursework extends GraphicsLab {
 			// Renders the dart grip
 
 			GL11.glTranslatef(dartMovementX, dartMovementY, 0);
-			//GL11.glTranslatef(dartMovementX, 0, 0);
 			GL11.glRotatef(dartAngleY, 1, 0, 0);
 			GL11.glRotatef(dartAngleX, 0, 1, 0);
 			GL11.glRotatef(spinRotationAngle, 0, 0, 1);
