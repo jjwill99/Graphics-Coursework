@@ -66,7 +66,9 @@
  *  |
  *  +-- [Rz(spinRotationAngle) Ry(dartAngleX) Rx(dartAngleY) T(dartMovementX, dartMovementY, 0)] Dart grip
  *  	|
- *  	+-- [T(0, 0, -2)] Dart spike
+ *  	+-- [Rz(-spinRotationAngle * 2) T(0, 0, -2)] Dart spike
+ *  	|	|
+ *  	|	+-- [Rxyz(spinRotationAngle) T(0, 0.5, starMovement)] Star
  *  	|
  *  	+-- [T(0, 0.1, 2.75)] First fin
  *  	|
@@ -91,8 +93,8 @@ import org.newdawn.slick.opengl.Texture;
 import GraphicsLab.*;
 
 /**
- * Simulation shows a dart that is thrown through the air, and hit a dart board.
- * With the extra challenge of flying through moving rings.
+ * Simulation shows a dart that is thrown through the air and hit a dart board,
+ * with the extra challenge of flying through moving rings.
  *
  * <p>
  * Controls:
@@ -195,7 +197,12 @@ public class CS2150Coursework extends GraphicsLab {
 	 * @see #renderScene()
 	 */
 	private final int shelfList = 12;
-	// TODO: ADD DOCUMENTATION
+	/**
+	 * display list id of the star
+	 * 
+	 * @see #initScene()
+	 * @see #renderScene()
+	 */
 	private final int starList = 13;
 	/**
 	 * value of the angle for the rotating rings
@@ -252,7 +259,12 @@ public class CS2150Coursework extends GraphicsLab {
 	 * @see #resetAnimations()
 	 */
 	private float dartMovementX = 0.0f;
-
+	/**
+	 * value of the star movement along the dart
+	 * 
+	 * @see #renderScene()
+	 * @see #updateScene()
+	 */
 	private float starMovement = 0.0f;
 	/**
 	 * value of the scene movement along the z axis
@@ -289,7 +301,9 @@ public class CS2150Coursework extends GraphicsLab {
 	 */
 	private boolean thrown = false;
 	/**
-	 * holds true if the star needs to move towards the back of the dart, false otherwise
+	 * holds true if the star needs to move towards the back of the dart, false
+	 * otherwise
+	 * 
 	 * @see #updateScene()
 	 */
 	private boolean starDirection = true;
@@ -304,8 +318,7 @@ public class CS2150Coursework extends GraphicsLab {
 	private Texture barSideTextures;
 	private Texture bottlesTextures;
 
-	// TODO: Feel free to change the window title and default animation scale
-	// here
+	// TODO: Feel free to change the window title and default animation scale here
 	public static void main(String args[]) {
 		new CS2150Coursework().run(WINDOWED, "Dartboard Game", 0.01f);
 	}
@@ -539,20 +552,20 @@ public class CS2150Coursework extends GraphicsLab {
 		// your animations
 		// can be made faster or slower depending on the machine you are working
 		// on
-		
+
 		spinRotationAngle += +40.0f * getAnimationScale();
 
 		ringAngle += 10.0f * getAnimationScale();
 
-		if (starMovement >= 3) {
+		if (starMovement >= 5) {
 			starDirection = true;
-		} else if (starMovement <= -0) {
+		} else if (starMovement <= 2) {
 			starDirection = false;
 		}
 		if (starDirection) {
-			starMovement -= 0.1f * getAnimationScale();
+			starMovement -= 0.2f * getAnimationScale();
 		} else {
-			starMovement += 0.1f * getAnimationScale();
+			starMovement += 0.2f * getAnimationScale();
 		}
 
 		if (moving < 13) {
@@ -1352,6 +1365,7 @@ public class CS2150Coursework extends GraphicsLab {
 				// Renders the dart spike
 
 				GL11.glTranslatef(0, 0, -2);
+				GL11.glRotatef(-spinRotationAngle * 2, 0, 0, 1);
 
 				// how shiny is the dart spike (specular exponent)
 				float spikeFrontShininess = 40.0f;
@@ -1367,6 +1381,30 @@ public class CS2150Coursework extends GraphicsLab {
 				GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(spikeFrontDiffuse));
 
 				GL11.glCallList(spikeList);
+
+				// Renders the star moving around the dart
+				GL11.glPushMatrix();
+				{
+					// how shiny is the back (specular exponent)
+					float finFrontShininess = 100.0f;
+					// specular reflection of the back
+					float finFrontSpecular[] = { 0.9f, 0.9f, 0.9f, 1.0f };
+					// diffuse reflection of the back
+					float finFrontDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+					// set the material properties for the back using OpenGL
+					GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, finFrontShininess);
+					GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(finFrontSpecular));
+					GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(finFrontDiffuse));
+					GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(finFrontDiffuse));
+
+					GL11.glTranslatef(0.0f, 0.5f, starMovement);
+					GL11.glRotatef(spinRotationAngle, 1, 1, 1);
+
+					GL11.glCallList(starList);
+				}
+				GL11.glPopMatrix();
+
 			}
 			GL11.glPopMatrix();
 
@@ -1446,29 +1484,6 @@ public class CS2150Coursework extends GraphicsLab {
 				GL11.glTranslatef(0, 0, 3);
 
 				GL11.glCallList(dartBackEndList);
-			}
-			GL11.glPopMatrix();
-
-			// Renders the star moving around the dart
-			GL11.glPushMatrix();
-			{
-				// how shiny is the back (specular exponent)
-				float finFrontShininess = 100.0f;
-				// specular reflection of the back
-				float finFrontSpecular[] = { 0.9f, 0.9f, 0.9f, 1.0f };
-				// diffuse reflection of the back
-				float finFrontDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-
-				// set the material properties for the back using OpenGL
-				GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, finFrontShininess);
-				GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(finFrontSpecular));
-				GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(finFrontDiffuse));
-				GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(finFrontDiffuse));
-
-				GL11.glTranslatef(0.0f, 0.5f, starMovement);
-				GL11.glRotatef(spinRotationAngle, 1, 1, 1);
-
-				GL11.glCallList(starList);
 			}
 			GL11.glPopMatrix();
 
