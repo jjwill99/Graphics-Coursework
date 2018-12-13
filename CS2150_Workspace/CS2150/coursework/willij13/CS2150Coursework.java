@@ -195,6 +195,8 @@ public class CS2150Coursework extends GraphicsLab {
 	 * @see #renderScene()
 	 */
 	private final int shelfList = 12;
+	// TODO: ADD DOCUMENTATION
+	private final int starList = 13;
 	/**
 	 * value of the angle for the rotating rings
 	 * 
@@ -210,6 +212,12 @@ public class CS2150Coursework extends GraphicsLab {
 	 * @see #updateScene()
 	 */
 	private float spinRotationAngle = 0.0f;
+	/**
+	 * value of the angle for the dart spinning when it hits the dart board
+	 * 
+	 * @see #checkSceneInput()
+	 */
+	private float finalAngle = 0.0f;
 	/**
 	 * value of the angle for the dart angling upwards/downwards
 	 * 
@@ -244,6 +252,8 @@ public class CS2150Coursework extends GraphicsLab {
 	 * @see #resetAnimations()
 	 */
 	private float dartMovementX = 0.0f;
+
+	private float starMovement = 0.0f;
 	/**
 	 * value of the scene movement along the z axis
 	 * 
@@ -278,6 +288,11 @@ public class CS2150Coursework extends GraphicsLab {
 	 * @see #resetAnimations()
 	 */
 	private boolean thrown = false;
+	/**
+	 * holds true if the star needs to move towards the back of the dart, false otherwise
+	 * @see #updateScene()
+	 */
+	private boolean starDirection = true;
 
 	// textures
 	private Texture groundTextures;
@@ -434,6 +449,11 @@ public class CS2150Coursework extends GraphicsLab {
 			drawUnitShelf();
 		}
 		GL11.glEndList();
+		GL11.glNewList(starList, GL11.GL_COMPILE);
+		{
+			drawUnitStar();
+		}
+		GL11.glEndList();
 	}
 
 	protected void checkSceneInput() {
@@ -489,8 +509,13 @@ public class CS2150Coursework extends GraphicsLab {
 
 			moving += 0.01f;
 			checkDartHit();
+			finalAngle = spinRotationAngle;
 		} else {
-			spinRotationAngle = 45f;
+			if (!isDartOnBoard()) {
+				spinRotationAngle = 45f;
+			} else {
+				spinRotationAngle = finalAngle;
+			}
 		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
@@ -514,10 +539,21 @@ public class CS2150Coursework extends GraphicsLab {
 		// your animations
 		// can be made faster or slower depending on the machine you are working
 		// on
-
+		
 		spinRotationAngle += +40.0f * getAnimationScale();
 
 		ringAngle += 10.0f * getAnimationScale();
+
+		if (starMovement >= 3) {
+			starDirection = true;
+		} else if (starMovement <= -0) {
+			starDirection = false;
+		}
+		if (starDirection) {
+			starMovement -= 0.1f * getAnimationScale();
+		} else {
+			starMovement += 0.1f * getAnimationScale();
+		}
 
 		if (moving < 13) {
 			GL11.glDisable(GL11.GL_LIGHT1);
@@ -1412,6 +1448,30 @@ public class CS2150Coursework extends GraphicsLab {
 				GL11.glCallList(dartBackEndList);
 			}
 			GL11.glPopMatrix();
+
+			// Renders the star moving around the dart
+			GL11.glPushMatrix();
+			{
+				// how shiny is the back (specular exponent)
+				float finFrontShininess = 100.0f;
+				// specular reflection of the back
+				float finFrontSpecular[] = { 0.9f, 0.9f, 0.9f, 1.0f };
+				// diffuse reflection of the back
+				float finFrontDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+				// set the material properties for the back using OpenGL
+				GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, finFrontShininess);
+				GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(finFrontSpecular));
+				GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(finFrontDiffuse));
+				GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(finFrontDiffuse));
+
+				GL11.glTranslatef(0.0f, 0.5f, starMovement);
+				GL11.glRotatef(spinRotationAngle, 1, 1, 1);
+
+				GL11.glCallList(starList);
+			}
+			GL11.glPopMatrix();
+
 		}
 		GL11.glPopMatrix();
 
@@ -2154,6 +2214,66 @@ public class CS2150Coursework extends GraphicsLab {
 			v3.submit();
 			v7.submit();
 			v8.submit();
+		}
+		GL11.glEnd();
+	}
+
+	private void drawUnitStar() {
+		Vertex v1 = new Vertex(0.0f, 0.1f, 0.0f);
+		Vertex v2 = new Vertex(-0.1f, -0.1f, -0.1f);
+		Vertex v3 = new Vertex(0.1f, -0.1f, -0.1f);
+		Vertex v4 = new Vertex(0.1f, -0.1f, 0.1f);
+		Vertex v5 = new Vertex(-0.1f, -0.1f, 0.1f);
+
+		// draw the bottom face:
+		GL11.glBegin(GL11.GL_POLYGON);
+		{
+			new Normal(v2.toVector(), v3.toVector(), v4.toVector(), v5.toVector()).submit();
+
+			v2.submit();
+			v3.submit();
+			v4.submit();
+			v5.submit();
+		}
+		GL11.glEnd();
+		// draw the near face:
+		GL11.glBegin(GL11.GL_TRIANGLES);
+		{
+			new Normal(v1.toVector(), v5.toVector(), v4.toVector()).submit();
+
+			v1.submit();
+			v5.submit();
+			v4.submit();
+		}
+		GL11.glEnd();
+		// draw the right face:
+		GL11.glBegin(GL11.GL_TRIANGLES);
+		{
+			new Normal(v1.toVector(), v4.toVector(), v3.toVector()).submit();
+
+			v1.submit();
+			v4.submit();
+			v3.submit();
+		}
+		GL11.glEnd();
+		// draw the far face:
+		GL11.glBegin(GL11.GL_TRIANGLES);
+		{
+			new Normal(v1.toVector(), v3.toVector(), v2.toVector()).submit();
+
+			v1.submit();
+			v3.submit();
+			v2.submit();
+		}
+		GL11.glEnd();
+		// draw the left face:
+		GL11.glBegin(GL11.GL_TRIANGLES);
+		{
+			new Normal(v1.toVector(), v2.toVector(), v5.toVector()).submit();
+
+			v1.submit();
+			v2.submit();
+			v5.submit();
 		}
 		GL11.glEnd();
 	}
