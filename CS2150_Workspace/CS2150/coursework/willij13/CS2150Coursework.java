@@ -220,7 +220,7 @@ public class CS2150Coursework extends GraphicsLab {
 	 */
 	private float spinRotationAngle = 0.0f;
 	/**
-	 * value of the angle for the dart spinning when it hits the dart board
+	 * value of the angle for the dart spinning when it has hit the dart board
 	 * 
 	 * @see #checkSceneInput()
 	 */
@@ -266,6 +266,12 @@ public class CS2150Coursework extends GraphicsLab {
 	 * @see #updateScene()
 	 */
 	private float starMovement = 0.0f;
+	/**
+	 * value of the star movement along the dart when the dart has hit the board
+	 * 
+	 * @see #checkSceneInput()
+	 */
+	private float finalStarPosition = 0.0f;
 	/**
 	 * value of the scene movement along the z axis
 	 * 
@@ -523,11 +529,14 @@ public class CS2150Coursework extends GraphicsLab {
 			moving += 0.01f;
 			checkDartHit();
 			finalAngle = spinRotationAngle;
+			finalStarPosition = starMovement;
 		} else {
 			if (!isDartOnBoard()) {
 				spinRotationAngle = 45f;
+				starMovement = 0;
 			} else {
 				spinRotationAngle = finalAngle;
+				starMovement = finalStarPosition;
 			}
 		}
 
@@ -1385,18 +1394,18 @@ public class CS2150Coursework extends GraphicsLab {
 				// Renders the star moving around the dart
 				GL11.glPushMatrix();
 				{
-					// how shiny is the back (specular exponent)
-					float finFrontShininess = 100.0f;
-					// specular reflection of the back
-					float finFrontSpecular[] = { 0.9f, 0.9f, 0.9f, 1.0f };
-					// diffuse reflection of the back
-					float finFrontDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+					// how shiny is the star (specular exponent)
+					float starFrontShininess = 100.0f;
+					// specular reflection of the star
+					float starFrontSpecular[] = { 1f, 1f, 1f, 1.0f };
+					// diffuse reflection of the star
+					float starFrontDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 					// set the material properties for the back using OpenGL
-					GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, finFrontShininess);
-					GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(finFrontSpecular));
-					GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(finFrontDiffuse));
-					GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(finFrontDiffuse));
+					GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, starFrontShininess);
+					GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(starFrontSpecular));
+					GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(starFrontDiffuse));
+					GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(starFrontDiffuse));
 
 					GL11.glTranslatef(0.0f, 0.5f, starMovement);
 					GL11.glRotatef(spinRotationAngle, 1, 1, 1);
