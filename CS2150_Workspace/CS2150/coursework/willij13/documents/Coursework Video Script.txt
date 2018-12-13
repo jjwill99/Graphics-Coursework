@@ -1,0 +1,13 @@
+This interface shows a dart flying through the air and hitting a dart board.
+Also in the scene is: a table, a drinks bar, a drinks shelf, ceiling lights, moving rings and a star flying around the dart.
+
+The main object is a dart. I created it using a cylinder for the grip, a cylinder for the spike, a sphere for the back end and a custom object for the fins.
+
+When I press the space bar the dart will begin moving.
+While it is moving, I can control the dart by using the w, a, s, d keys.
+
+During flight, the lights change colour and effect the whole scene.
+
+When the dart hits the board, it stops the dart, and I can press r to reset the interface.
+
+If the dart gets close to the edge of the screen, the scene moves so that the dart does not move out of view.
